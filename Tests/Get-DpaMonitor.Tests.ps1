@@ -1,7 +1,20 @@
-#. $PSScriptRoot\..\Public\Get-DpaMonitor.ps1
+$CommandName = $MyInvocation.MyCommand.Name.Replace(".Tests.ps1", "")
+. $PSScriptRoot\Shared.ps1
 
-Describe "Get-DpaMonitor" {
-    Context "Design" {
+Describe "$CommandName Unit Tests" -Tag 'Unit' {
+    Context "Command Design" {
+        $command = Get-Command -Name $CommandName
 
+        $testCases = @(
+            @{Name = 'DatabaseId'}
+        )
+        It 'should have a <Name> parameter' -TestCases $testCases {
+            param ( $Name )
+            $command | Should -HaveParameter $Name
+        }
     }
+}
+
+Describe "$CommandName Integration Tests" -Tag 'Integration' {
+
 }
