@@ -8,3 +8,7 @@ $ModuleName = $ENV:BHProjectName
 
 Remove-Module $ENV:BHProjectName -ErrorAction SilentlyContinue
 Import-Module (Join-Path $ENV:BHProjectPath $ModuleName) -Force
+
+function Initialize-TestDrive {
+    Copy-Item $PSScriptRoot\Responses\* TestDrive:\
+}

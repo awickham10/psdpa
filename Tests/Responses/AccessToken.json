@@ -1,0 +1,8 @@
+{
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiJpZ25pdGUiLCJzY29wZSI6W10sImlkIjotMSwidXNlcl...",
+    "token_type": "bearer",
+    "expires_in": 365,
+    "id": -1,
+    "userType": "repo",
+    "jti": "e0d51295-2010-4ed4-b5ea-982a4e6ae1c5"
+}
