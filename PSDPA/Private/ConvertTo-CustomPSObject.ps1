@@ -1,16 +1,14 @@
-function ConvertTo-PSObject {
+function ConvertTo-CustomPSObject {
     [CmdletBinding()]
     param (
         [Parameter(ValueFromPipeline)]
-        $InputObject
+        [PSCustomObject] $InputObject
     )
 
-    begin {
-        $properties = $json.PSObject.Properties.Name
-        $textInfo = (Get-Culture).TextInfo
-    }
-
     process {
+        $properties = $InputObject.PSObject.Properties.Name
+        $textInfo = (Get-Culture).TextInfo
+
         $newObject = @{}
 
         foreach ($property in $properties) {

@@ -40,14 +40,17 @@ function Get-DpaMonitor {
         $uriPart = 'databases/monitor-information'
     }
 
-    $uri = Get-DpaBaseUri
+    $uri = (Get-DpaConfig -Name 'baseuri').Value
     $uri += "/$uriPart"
+
+    # TODO: DEFINE HEADERS
 
     try {
         $response = Invoke-RestMethod -Uri $uri -Method 'Get' -Headers $headers
         $response.data
     }
     catch {
+        Stop-PSFFunction -Message ""
         $_.Exception.ToString()
     }
 }

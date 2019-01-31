@@ -12,8 +12,8 @@ function Get-DpaAccessToken {
     }
 
     try {
-        Write-PSFMessage -Level Verbose -Message "Getting access token"
-        Invoke-RestMethod -Uri $authTokenUri -Method 'POST' -Body $request
+        $response = Invoke-RestMethod -Uri $authTokenUri -Method 'POST' -Body $request
+        $response.data
     }
     catch {
         Stop-PSFFunction -Message "Could not obtain access token" -ErrorRecord $_ -EnableException $EnableException

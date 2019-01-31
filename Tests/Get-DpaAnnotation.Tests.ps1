@@ -26,5 +26,8 @@ Describe "$CommandName Unit Tests" -Tag 'Unit' {
 }
 
 Describe "$CommandName Integration Tests" -Tag 'Integration' {
+    BeforeAll {
+        Initialize-TestDrive
+    }
 
 }

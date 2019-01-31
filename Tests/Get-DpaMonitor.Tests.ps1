@@ -16,19 +16,34 @@ Describe "$CommandName Unit Tests" -Tag 'Unit' {
 }
 
 Describe "$CommandName Integration Tests" -Tag 'Integration' {
-    It 'should return a single monitor' {
-
+    BeforeAll {
+        Initialize-TestDrive
     }
 
-    It 'should return multiple monitors' {
+    Context 'returns monitor data' {
+        Mock -CommandName 'Invoke-RestMethod' -MockWith {
+            return @{data = Get-Content -Path TestDrive:\SingleMonitor.json -Raw | ConvertFrom-Json | ConvertTo-PSObject}
+        }
 
-    }
+        It 'should return a single monitor' {
+            $databaseId = 1
+            $monitor = @(Get-DpaMonitor -DatabaseId $databaseId)
+            $monitor | Should -HaveCount 1
+            $monitor.DbId | Should -BeExactly $databaseId
+        }
 
-    It 'should return all monitors' {
+        It 'should return multiple monitors' {
+            $monitor = Get-DpaMonitor -DatabaseId $databaseId
+            $monitor | Should -HaveCount 2
+        }
 
-    }
+        It 'should return all monitors' {
+            $monitors = Get-DpaMonitor
+            $monitor | Should -HaveCount 3
+        }
 
-    It 'should return nothing when the monitor is not found' {
-
+        It 'should return nothing when the monitor is not found' {
+            Get-DpaMonitor -DatabaseId 0 | Should -BeNullOrEmpty
+        }
     }
 }
