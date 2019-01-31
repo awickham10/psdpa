@@ -16,5 +16,19 @@ Describe "$CommandName Unit Tests" -Tag 'Unit' {
 }
 
 Describe "$CommandName Integration Tests" -Tag 'Integration' {
+    It 'should return a single monitor' {
 
+    }
+
+    It 'should return multiple monitors' {
+
+    }
+
+    It 'should return all monitors' {
+
+    }
+
+    It 'should return nothing when the monitor is not found' {
+
+    }
 }
