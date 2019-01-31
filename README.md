@@ -21,6 +21,10 @@ Get-DpaMonitor
 ```
 
 ## Functions
+### Configuration
+* Set-DpaConfig
+* Get-DpaConfig
+
 ### Authentication
 * Get-DpaToken
 
