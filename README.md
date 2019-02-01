@@ -30,8 +30,8 @@ Get-DpaMonitor
 
 ### Monitor
 * Get-DpaMonitor - Test Coverage Needed
-* Start-DpaMonitor - Not Implemented
-* Stop-DpaMonitor - Not Implemented
+* Start-DpaMonitor - Test Coverage Needed
+* Stop-DpaMonitor - Test Coverage Needed
 * Set-DpaMonitorPassword - Not Implemented
 * Add-DpaMonitor - Not Implemented
 
