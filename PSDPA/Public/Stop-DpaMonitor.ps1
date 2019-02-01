@@ -1,5 +1,5 @@
 function Stop-DpaMonitor {
-    [CmdletBinding(DefaultParameterSetName = 'ByName')]
+    [CmdletBinding(DefaultParameterSetName = 'ByName', SupportsShouldProcess, ConfirmImpact = 'High')]
     param (
         [Parameter(ParameterSetName = 'ByDatabaseId', Mandatory)]
         $DatabaseId,
@@ -7,6 +7,7 @@ function Stop-DpaMonitor {
         [Parameter(ParameterSetName = 'ByName', Mandatory)]
         $MonitorName,
 
+        [Parameter()]
         [switch] $EnableException
     )
 
@@ -26,10 +27,12 @@ function Stop-DpaMonitor {
         command = 'STOP'
     }
 
-    try {
-        $response = Invoke-DpaRequest -Endpoint "/databases/$($monitor.Dbid)/monitor-status" -Method 'PUT' -Request $request
-    }
-    catch {
-        Stop-PSFFunction -Message "Could not stop the monitor" -ErrorRecord $_ -Target $monitor.Name
+    if ($PSCmdlet.ShouldProcess($monitor.Name, 'Stop Monitor')) {
+        try {
+            $response = Invoke-DpaRequest -Endpoint "/databases/$($monitor.Dbid)/monitor-status" -Method 'PUT' -Request $request
+        }
+        catch {
+            Stop-PSFFunction -Message "Could not stop the monitor" -ErrorRecord $_ -Target $monitor.Name
+        }
     }
 }
