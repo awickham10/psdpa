@@ -104,7 +104,14 @@ function Add-DpaMonitor {
         }
     }
 
-    $response = Invoke-DpaRequest -Endpoint '/databases/register-monitor' -Request $request -Method 'POST'
+    try {
+        $response = Invoke-DpaRequest -Endpoint '/databases/register-monitor' -Request $request -Method 'POST'
+    }
+    catch {
+        Stop-PSFFunction -Message "Could not register monitor" -ErrorRecord $_
+        return
+    }
+
     if ($response.Result -eq 'SUCCESS') {
         Get-DpaMonitor -DatabaseId $response.DatabaseId
     }
