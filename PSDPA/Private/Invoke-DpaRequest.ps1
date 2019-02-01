@@ -53,7 +53,7 @@ function Invoke-DpaRequest {
         'Method' = $Method
     }
     if ($PSBoundParameters.ContainsKey('Request')) {
-        $params['Request'] = $Request
+        $params['Body'] = $Request | ConvertTo-Json
     }
 
     Invoke-RestMethod @params | Select-Object -ExpandProperty data | ConvertTo-CustomPSObject
