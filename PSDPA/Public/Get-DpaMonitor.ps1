@@ -30,27 +30,43 @@ function Get-DpaMonitor {
     param (
         [Parameter(ParameterSetName = 'ByDatabaseId')]
         [ValidateNotNullOrEmpty()]
-        $DatabaseId
+        $DatabaseId,
+
+        [Parameter(ParameterSetName = 'ByName')]
+        [ValidateNotNullOrEmpty()]
+        [string[]] $Name,
+
+        [Parameter()]
+        [switch] $EnableException
     )
 
-    if ($PSCMdlet.ParameterSetName -eq 'ByDatabaseId') {
-        $uriPart = "databases/$DatabaseId/monitor-information"
+    if ($PSBoundParameters.ContainsKey('DatabaseId') -and -not ($DatabaseId -is [array])) {
+        Write-PSFMessage -Level Verbose -Message 'Getting a single monitor'
+        $endpoint = "/databases/$DatabaseId/monitor-information"
     }
     else {
-        $uriPart = 'databases/monitor-information'
+        Write-PSFMessage -Level Verbose -Message 'Getting all monitors'
+        $endpoint = '/databases/monitor-information'
     }
-
-    $uri = (Get-DpaConfig -Name 'baseuri').Value
-    $uri += "/$uriPart"
-
-    # TODO: DEFINE HEADERS
 
     try {
-        $response = Invoke-RestMethod -Uri $uri -Method 'Get' -Headers $headers
-        $response.data
+        $response = Invoke-DpaRequest -Endpoint $endpoint -Method 'Get'
+
+        if ($PSBoundParameters.ContainsKey('DatabaseId') -and $DatabaseId -is [array]) {
+            $response | Where-Object { $_.DbId -in $DatabaseId }
+        }
+        elseif ($PSCmdlet.ParameterSetName -eq 'ByName') {
+            $response | Where-Object { $_.Name -in $Name }
+        }
+        else {
+            $response
+        }
     }
     catch {
-        Stop-PSFFunction -Message ""
-        $_.Exception.ToString()
+        if ($_.Exception.Response.StatusCode.value__ -eq 422) {
+            return $null
+        }
+
+        Stop-PSFFunction -Message 'Could not retrieve monitor information' -ErrorRecord $_ -EnableException:$EnableException
     }
 }

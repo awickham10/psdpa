@@ -20,30 +20,42 @@ Describe "$CommandName Integration Tests" -Tag 'Integration' {
         Initialize-TestDrive
     }
 
-    Context 'returns monitor data' {
-        Mock -CommandName 'Invoke-RestMethod' -MockWith {
-            return @{data = Get-Content -Path TestDrive:\SingleMonitor.json -Raw | ConvertFrom-Json | ConvertTo-PSObject}
-        }
+    InModuleScope 'PSDPA' {
+        Context 'returns monitor data' {
+            Mock -CommandName 'Invoke-RestMethod' -MockWith {
+                Get-Content -Path TestDrive:\SingleMonitor.json -Raw | ConvertFrom-Json
+            }
 
-        It 'should return a single monitor' {
-            $databaseId = 1
-            $monitor = @(Get-DpaMonitor -DatabaseId $databaseId)
-            $monitor | Should -HaveCount 1
-            $monitor.DbId | Should -BeExactly $databaseId
-        }
+            It 'should return a single monitor' {
+                $databaseId = 1
+                $monitor = @(Get-DpaMonitor -DatabaseId $databaseId)
+                $monitor | Should -HaveCount 1
+                $monitor.DbId | Should -BeExactly $databaseId
+            }
 
-        It 'should return multiple monitors' {
-            $monitor = Get-DpaMonitor -DatabaseId $databaseId
-            $monitor | Should -HaveCount 2
-        }
+            Mock -CommandName 'Invoke-RestMethod' -MockWith {
+                if ($Uri -like '*/databases/0/monitor-information') {
+                    throw New-Object System.Web.HttpException 404, 'Not Found'
+                }
+                else {
+                    Get-Content -Path TestDrive:\MultipleMonitors.json -Raw | ConvertFrom-Json
+                }
+            }
 
-        It 'should return all monitors' {
-            $monitors = Get-DpaMonitor
-            $monitor | Should -HaveCount 3
-        }
+            It 'should return multiple monitors' {
+                $databaseId = @(1, 2)
+                $monitors = Get-DpaMonitor -DatabaseId $databaseId
+                $monitors | Should -HaveCount 2
+            }
 
-        It 'should return nothing when the monitor is not found' {
-            Get-DpaMonitor -DatabaseId 0 | Should -BeNullOrEmpty
+            It 'should return all monitors' {
+                $monitors = Get-DpaMonitor
+                $monitors | Should -HaveCount 3
+            }
+
+            It 'should return nothing when the monitor is not found' {
+                Get-DpaMonitor -DatabaseId 0 -WarningAction SilentlyContinue | Should -BeNullOrEmpty
+            }
         }
     }
 }

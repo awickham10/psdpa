@@ -9,8 +9,7 @@ Describe "$CommandName Integration Tests" -Tag 'Integration' {
     InModuleScope 'PSDPA' {
         Context 'valid token' {
             Mock -CommandName 'Invoke-RestMethod' -MockWith {
-                $data = Get-Content -Path TestDrive:\AccessToken.json -Raw | ConvertFrom-Json | ConvertTo-CustomPSObject
-                [PSCustomObject] @{data = $data}
+                Get-Content -Path TestDrive:\AccessToken.json -Raw | ConvertFrom-Json
             }
 
             It 'returns an access token' {
