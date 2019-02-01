@@ -17,7 +17,7 @@ Import-Module PSDPA
 Get-Command -Module PSDPA
 
 # Configure the module
-Set-DpaConfig -BaseUri 'http://yourdpaserver:8124/iwc/api' -RefreshToken 'yourprivatestring'
+Set-DpaConfig -BaseUri 'https://yourdpaserver:8124/iwc/api' -RefreshToken 'yourprivatestring'
 
 # Get listing of monitors
 Get-DpaMonitor
@@ -25,24 +25,21 @@ Get-DpaMonitor
 
 ## Functions
 ### Configuration
-* Set-DpaConfig
-* Get-DpaConfig
-
-### Authentication
-* Get-DpaToken
+* Set-DpaConfig - Complete
+* Get-DpaConfig - Complete
 
 ### Monitor
-* Get-DpaMonitor
-* Start-DpaMonitor
-* Stop-DpaMonitor
-* Set-DpaMonitorPassword
-* Add-DpaMonitor
+* Get-DpaMonitor - Test Coverage Needed
+* Start-DpaMonitor - Not Implemented
+* Stop-DpaMonitor - Not Implemented
+* Set-DpaMonitorPassword - Not Implemented
+* Add-DpaMonitor - Not Implemented
 
 ### Licensing
-* Get-DpaLicense
-* Set-DpaLicense
+* Get-DpaLicense - Not Implemented
+* Set-DpaLicense - Not Implemented
 
 ### Annotations
-* Get-DpaAnnotation
-* Add-DpaAnnotation
-* Remove-DpaAnnotation
+* Get-DpaAnnotation - Test Coverage Needed
+* Add-DpaAnnotation - Test Coverage Needed
+* Remove-DpaAnnotation - Not Implemented
