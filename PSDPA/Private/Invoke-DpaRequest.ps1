@@ -11,7 +11,10 @@ function Invoke-DpaRequest {
         $Request,
 
         [Parameter()]
-        $Method = 'POST'
+        $Method = 'POST',
+
+        [Parameter()]
+        $Parameters
     )
 
     if (-not $PSBoundParameters.ContainsKey('AccessToken')) {
@@ -35,14 +38,23 @@ function Invoke-DpaRequest {
     }
     $uri += $Endpoint
 
-    $parameters = @{
+    if ($PSBoundParameters.ContainsKey('Parameters')) {
+        $query = @()
+        foreach ($parameter in $Parameters.GetEnumerator()) {
+            $query += "$($parameter.Key)=" + [System.Web.HttpUtility]::UrlEncode([string]$parameter.Value)
+        }
+
+        $uri += '?' + ($query -join '&')
+    }
+
+    $params = @{
         'Uri' = $uri
         'Headers' = $headers
         'Method' = $Method
     }
     if ($PSBoundParameters.ContainsKey('Request')) {
-        $parameters['Request'] = $Request
+        $params['Request'] = $Request
     }
 
-    Invoke-RestMethod @parameters | Select-Object -ExpandProperty data | ConvertTo-CustomPSObject
+    Invoke-RestMethod @params | Select-Object -ExpandProperty data | ConvertTo-CustomPSObject
 }

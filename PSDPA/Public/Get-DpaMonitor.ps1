@@ -1,30 +1,3 @@
-<#
-.SYNOPSIS
-Get monitor information
-
-.DESCRIPTION
-Gets information about all montiors or specific monitors (e.g. name, IP,
-connection string, type, version, edition).
-
-.PARAMETER DatabaseId
-If specified, returns monitor information for that specific database.
-
-.EXAMPLE
-Gets all monitors
-
-Get-DpaMonitor
-
-.EXAMPLE
-Gets a specific monitor
-
-Get-DpaMonitor -DatabaseId 1
-
-.EXAMPLE
-Gets a set of monitors
-
-Get-DpaMonitor -DatabaseId 1,2,3
-
-#>
 function Get-DpaMonitor {
     [CmdletBinding(DefaultParameterSetName = 'All')]
     param (
@@ -34,7 +7,7 @@ function Get-DpaMonitor {
 
         [Parameter(ParameterSetName = 'ByName')]
         [ValidateNotNullOrEmpty()]
-        [string[]] $Name,
+        [string[]] $MonitorName,
 
         [Parameter()]
         [switch] $EnableException
@@ -56,7 +29,7 @@ function Get-DpaMonitor {
             $response | Where-Object { $_.DbId -in $DatabaseId }
         }
         elseif ($PSCmdlet.ParameterSetName -eq 'ByName') {
-            $response | Where-Object { $_.Name -in $Name }
+            $response | Where-Object { $_.Name -in $MonitorName }
         }
         else {
             $response
