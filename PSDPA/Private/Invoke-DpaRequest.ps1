@@ -21,7 +21,7 @@ function Invoke-DpaRequest {
         $AccessToken = Get-DpaAccessToken
     }
 
-    if (-not $AccessToken.TokenType -or -not $AccessToken.AccessToken) {
+    if (-not $AccessToken.IsValid()) {
         Stop-Function -Message "You do not have a valid access token"
         return
     }
@@ -29,7 +29,7 @@ function Invoke-DpaRequest {
     $headers = @{
         'Accept' = 'application/json'
         'Content-Type' = 'application/json;charset=UTF-8'
-        'Authorization' = "$($AccessToken.TokenType) $($AccessToken.AccessToken)"
+        'Authorization' = $AccessToken.ToAuthorizationHeader()
     }
 
     $uri = (Get-DpaConfig -Name 'BaseUri').Value
