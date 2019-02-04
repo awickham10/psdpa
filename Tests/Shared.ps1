@@ -10,5 +10,18 @@ Remove-Module $ENV:BHProjectName -ErrorAction SilentlyContinue
 Import-Module (Join-Path $ENV:BHProjectPath $ModuleName) -Force
 
 function Initialize-TestDrive {
-    Copy-Item $PSScriptRoot\Responses\* TestDrive:\
+    param (
+        $Tag
+    )
+
+    Copy-Item "$PSScriptRoot\Responses\$Tag\*" "TestDrive:\"
+}
+
+function Get-JsonResponse {
+    param (
+        $Tag,
+        $Response
+    )
+
+    Get-Content -Path "TestDrive:\$Tag\$Response.json" -Raw | ConvertFrom-Json
 }

@@ -17,13 +17,13 @@ Describe "$CommandName Unit Tests" -Tag 'Unit' {
 
 Describe "$CommandName Integration Tests" -Tag 'Integration' {
     BeforeAll {
-        Initialize-TestDrive
+        Initialize-TestDrive -Tag Monitor
     }
 
     InModuleScope 'PSDPA' {
         Context 'returns monitor data' {
             Mock -CommandName 'Invoke-RestMethod' -MockWith {
-                Get-Content -Path TestDrive:\SingleMonitor.json -Raw | ConvertFrom-Json
+                Get-JsonResponse -Tag Monitor -Response 'SingleMonitor'
             }
 
             It 'should return a single monitor' {
@@ -38,7 +38,7 @@ Describe "$CommandName Integration Tests" -Tag 'Integration' {
                     throw New-Object System.Web.HttpException 404, 'Not Found'
                 }
                 else {
-                    Get-Content -Path TestDrive:\MultipleMonitors.json -Raw | ConvertFrom-Json
+                    Get-JsonResponse -Tag Monitor -Response 'MultipleMonitors'
                 }
             }
 
