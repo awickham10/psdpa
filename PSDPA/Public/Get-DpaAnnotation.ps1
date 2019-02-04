@@ -29,13 +29,6 @@ The end of the time period to get annotations for.
 Replaces user friendly yellow warnings with bloody red exceptions of doom! Use
 this if you want the function to throw terminating errors you want to catch.
 
-.NOTES
-Tags: Database
-Author: Andrew Wickham ( @awickham )
-
-Copyright: (C) Andrew Wickham, andrew@awickham.com
-License: MIT https://opensource.org/licenses/MIT
-
 .EXAMPLE
 Get-DpaAnnotation -DatabaseId 1
 
@@ -55,6 +48,12 @@ Gets annotations by piping a monitor
 Get-DpaMonitor | Get-DpaAnnotation -StartTime (Get-Date).AddDays(-30)
 
 Get all annotations over the last 30 days for all monitors
+
+.NOTES
+Author: Andrew Wickham ( @awickham )
+
+Copyright: (C) Andrew Wickham, andrew@awickham.com
+License: MIT https://opensource.org/licenses/MIT
 
 #>
 function Get-DpaAnnotation {
