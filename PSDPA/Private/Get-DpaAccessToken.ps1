@@ -12,11 +12,12 @@ function Get-DpaAccessToken {
     }
 
     try {
-        $response = Invoke-RestMethod -Uri $authTokenUri -Method 'POST' -Body $request | ConvertTo-CustomPSObject
+        $response = Invoke-RestMethod -Uri $authTokenUri -Method 'POST' -Body $request
+        $accessToken = New-Object -TypeName 'AccessToken' -ArgumentList $response
 
-        Set-PSFConfig -Module 'psdpa' -Name 'accesstoken' -Value $response
-        $PSDefaultParameterValues['Invoke-DpaRequest:AccessToken'] = $response
-        $response
+        Set-PSFConfig -Module 'psdpa' -Name 'accesstoken' -Value $accessToken
+        $PSDefaultParameterValues['Invoke-DpaRequest:AccessToken'] = $accessToken
+        return $accessToken
     }
     catch {
         Stop-PSFFunction -Message "Could not obtain access token" -ErrorRecord $_ -EnableException $EnableException
