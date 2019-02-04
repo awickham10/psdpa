@@ -2,10 +2,13 @@ function Get-DpaAnnotation {
     [CmdletBinding(DefaultParameterSetName = 'ByName')]
     param (
         [Parameter(ParameterSetName = 'ByDatabaseId')]
-        $DatabaseId,
+        [int[]] $DatabaseId,
 
         [Parameter(ParameterSetName = 'ByName')]
-        $MonitorName,
+        [string[]] $MonitorName,
+
+        [Parameter(ParameterSetName = 'ByMonitor', ValueFromPipeline)]
+        [Monitor[]] $Monitor,
 
         [Parameter()]
         [DateTime] $StartTime = (Get-Date).AddDays(-30),
@@ -16,27 +19,28 @@ function Get-DpaAnnotation {
         [switch] $EnableException
     )
 
-    if ($PSCmdlet.ParameterSetName -eq 'ByName') {
-        $monitor = Get-DpaMonitor -MonitorName $MonitorName
-    }
-    else {
-        $monitor = Get-DpaMonitor -DatabaseId $DatabaseId
-    }
-
-    if (-not $monitor) {
-        Stop-PSFFunction -Message "Monitor does not exist" -EnableException:$EnableException
-        return
+    begin {
+        if ($PSCmdlet.ParameterSetName -eq 'ByName') {
+            $Monitor = Get-DpaMonitor -MonitorName $MonitorName
+        }
+        elseif ($PSCmdlet.ParameterSetName -eq 'ByDatabaseId') {
+            $Monitor = Get-DpaMonitor -DatabaseId $DatabaseId
+        }
     }
 
-    $endpoint = "/databases/$($monitor.DatabaseId)/annotations"
+    process {
+        foreach ($monitorObject in $Monitor) {
+            $endpoint = "/databases/$($monitorObject.DatabaseId)/annotations"
 
-    $parameters = @{
-        'startTime' = $StartTime.ToString("yyyy-MM-ddTHH\:mm\:ss.fffzzz")
-        'endTime' = $EndTime.ToString("yyyy-MM-ddTHH\:mm\:ss.fffzzz")
-    }
+            $parameters = @{
+                'startTime' = $StartTime.ToString("yyyy-MM-ddTHH\:mm\:ss.fffzzz")
+                'endTime' = $EndTime.ToString("yyyy-MM-ddTHH\:mm\:ss.fffzzz")
+            }
 
-    $response = Invoke-DpaRequest -Endpoint $endpoint -Method 'Get' -Parameters $parameters
-    foreach ($annotation in $response.data) {
-        New-Object -TypeName 'Annotation' -ArgumentList $annotation
+            $response = Invoke-DpaRequest -Endpoint $endpoint -Method 'Get' -Parameters $parameters
+            foreach ($annotation in $response.data) {
+                New-Object -TypeName 'Annotation' -ArgumentList $annotation
+            }
+        }
     }
 }

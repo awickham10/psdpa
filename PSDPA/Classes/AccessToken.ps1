@@ -14,7 +14,7 @@ class AccessToken {
         $this.ExpiresIn = $Json.expires_in
         $this.UserType = $Json.userType
         $this.Jti = $Json.jti
-        $this.Expiration = (Get-Date).AddDays($this.ExpiresIn)
+        $this.Expiration = (Get-Date).AddSeconds($this.ExpiresIn)
     }
 
     [string] ToAuthorizationHeader() {
