@@ -24,16 +24,7 @@ function Get-DpaMonitor {
 
     try {
         $response = Invoke-DpaRequest -Endpoint $endpoint -Method 'Get'
-
-        if ($PSBoundParameters.ContainsKey('DatabaseId') -and $DatabaseId -is [array]) {
-            $response | Where-Object { $_.DbId -in $DatabaseId }
-        }
-        elseif ($PSCmdlet.ParameterSetName -eq 'ByName') {
-            $response | Where-Object { $_.Name -in $MonitorName }
-        }
-        else {
-            $response
-        }
+        $monitors = $response.data
     }
     catch {
         if ($_.Exception.Response.StatusCode.value__ -eq 422) {
@@ -41,5 +32,17 @@ function Get-DpaMonitor {
         }
 
         Stop-PSFFunction -Message 'Could not retrieve monitor information' -ErrorRecord $_ -EnableException:$EnableException
+    }
+
+    if ($PSBoundParameters.ContainsKey('DatabaseId') -and $DatabaseId -is [array]) {
+        $monitors = $monitors | Where-Object { $_.dbid -in $DatabaseId }
+    }
+    elseif ($PSCmdlet.ParameterSetName -eq 'ByName') {
+        $monitors = $monitors | Where-Object { $_.name -in $MonitorName }
+    }
+
+    $monitorFactory = New-Object MonitorFactory
+    foreach ($monitor in $monitors) {
+        $monitorFactory.New($monitor)
     }
 }

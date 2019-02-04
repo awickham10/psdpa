@@ -34,7 +34,7 @@ function Add-DpaAnnotation {
         return
     }
 
-    $endpoint = "/databases/$($monitor.DbId)/annotations"
+    $endpoint = "/databases/$($monitor.DatabaseId)/annotations"
 
     $request = @{
         'title' = $Title
@@ -43,5 +43,6 @@ function Add-DpaAnnotation {
         'time' = $Time.ToString("yyyy-MM-ddTHH\:mm\:sszzz")
     }
 
-    Invoke-DpaRequest -Endpoint $endpoint -Method 'Post' -Request $request
+    $response = Invoke-DpaRequest -Endpoint $endpoint -Method 'Post' -Request $request
+    New-Object -TypeName 'Annotation' -ArgumentList $response.data
 }

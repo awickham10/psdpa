@@ -28,12 +28,15 @@ function Get-DpaAnnotation {
         return
     }
 
-    $endpoint = "/databases/$($monitor.DbId)/annotations"
+    $endpoint = "/databases/$($monitor.DatabaseId)/annotations"
 
     $parameters = @{
         'startTime' = $StartTime.ToString("yyyy-MM-ddTHH\:mm\:ss.fffzzz")
         'endTime' = $EndTime.ToString("yyyy-MM-ddTHH\:mm\:ss.fffzzz")
     }
 
-    Invoke-DpaRequest -Endpoint $endpoint -Method 'Get' -Parameters $parameters
+    $response = Invoke-DpaRequest -Endpoint $endpoint -Method 'Get' -Parameters $parameters
+    foreach ($annotation in $response.data) {
+        New-Object -TypeName 'Annotation' -ArgumentList $annotation
+    }
 }

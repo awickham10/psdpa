@@ -3,9 +3,10 @@ param (
 )
 
 # Get public and private function definition files
+$Classes = @( Get-ChildItem -Path $PSScriptRoot\Classes\*.ps1 -ErrorAction SilentlyContinue )
 $Public  = @( Get-ChildItem -Path $PSScriptRoot\Public\*.ps1 -ErrorAction SilentlyContinue )
 $Private = @( Get-ChildItem -Path $PSScriptRoot\Private\*.ps1 -ErrorAction SilentlyContinue )
-$FilesToLoad = @([object[]]$Public + [object[]]$Private) | Where-Object {$_}
+$FilesToLoad = @([object[]]$Classes + [object[]]$Public + [object[]]$Private) | Where-Object {$_}
 $ModuleRoot = $PSScriptRoot
 
 # Dot source the files

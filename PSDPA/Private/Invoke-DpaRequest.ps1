@@ -56,5 +56,5 @@ function Invoke-DpaRequest {
         $params['Body'] = $Request | ConvertTo-Json
     }
 
-    Invoke-RestMethod @params | Select-Object -ExpandProperty data | ConvertTo-CustomPSObject
+    Invoke-RestMethod @params
 }
