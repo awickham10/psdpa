@@ -27,4 +27,9 @@ foreach ($file in $filesToLoad) {
     }
 }
 
-#Export-ModuleMember -Function $public.BaseName
+if ($developerMode) {
+    Export-ModuleMember -Function $classes.BaseName
+    Export-ModuleMember -Function $private.BaseName
+}
+
+Export-ModuleMember -Function $public.BaseName
