@@ -22,7 +22,7 @@ function Invoke-DpaRequest {
     }
 
     if (-not $AccessToken.IsValid()) {
-        Stop-Function -Message "You do not have a valid access token"
+        Stop-PSFFunction -Message "You do not have a valid access token"
         return
     }
 

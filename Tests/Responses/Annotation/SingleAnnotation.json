@@ -1,0 +1,10 @@
+{
+    "data": {
+        "id": 98,
+        "title": "Test Title",
+        "description": "API Test Event created by DPA API",
+        "createdBy": "DPA API",
+        "time": "2018-12-04T18:13:04-07:00",
+        "type": "Custom"
+    }
+}

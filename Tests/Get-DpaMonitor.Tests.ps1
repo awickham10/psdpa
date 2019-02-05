@@ -16,46 +16,58 @@ Describe "$CommandName Unit Tests" -Tag 'Unit' {
 }
 
 Describe "$CommandName Integration Tests" -Tag 'Integration' {
-    BeforeAll {
-        Initialize-TestDrive -Tag Monitor
-    }
+    Context 'returns monitor data' {
+        Mock -ModuleName 'PSDPA' -CommandName 'Get-DpaAccessToken' -MockWith {
+            New-Object -TypeName 'AccessToken' -ArgumentList ([PSCustomObject] @{
+                access_token = 'myfakeaccesstoken'
+                token_type = 'bearer'
+                expires_in = 900
+            })
+        }
 
-    InModuleScope 'PSDPA' {
-        Context 'returns monitor data' {
-            Mock -CommandName 'Invoke-RestMethod' -MockWith {
-                Get-JsonResponse -Tag Monitor -Response 'SingleMonitor'
-            }
+        Mock -ModuleName 'PSDPA' -CommandName 'Invoke-RestMethod' -MockWith {
+            Get-JsonResponse -Tag 'Monitor' -Response 'SingleMonitor'
+        }
 
-            It 'should return a single monitor' {
-                $databaseId = 1
-                $monitor = @(Get-DpaMonitor -DatabaseId $databaseId)
-                $monitor | Should -HaveCount 1
-                $monitor.DbId | Should -BeExactly $databaseId
-            }
+        It 'should return a single monitor' {
+            $databaseId = 1
+            $monitor = @(Get-DpaMonitor -DatabaseId $databaseId)
+            $monitor | Should -HaveCount 1
+            $monitor.DatabaseId | Should -BeExactly $databaseId
 
-            Mock -CommandName 'Invoke-RestMethod' -MockWith {
-                if ($Uri -like '*/databases/0/monitor-information') {
-                    throw New-Object System.Web.HttpException 404, 'Not Found'
-                }
-                else {
-                    Get-JsonResponse -Tag Monitor -Response 'MultipleMonitors'
-                }
-            }
+            Assert-MockCalled -ModuleName 'PSDPA' -CommandName 'Invoke-RestMethod' -Times 1
+        }
 
-            It 'should return multiple monitors' {
-                $databaseId = @(1, 2)
-                $monitors = Get-DpaMonitor -DatabaseId $databaseId
-                $monitors | Should -HaveCount 2
+        Mock -ModuleName 'PSDPA' -CommandName 'Invoke-RestMethod' -MockWith {
+            if ($Uri -like '*/databases/0/monitor-information') {
+                throw New-Object System.Web.HttpException 404, 'Not Found'
             }
+            else {
+                Get-JsonResponse -Tag 'Monitor' -Response 'MultipleMonitors'
+            }
+        }
 
-            It 'should return all monitors' {
-                $monitors = Get-DpaMonitor
-                $monitors | Should -HaveCount 3
-            }
+        It 'should return multiple monitors' {
+            $databaseId = @(1, 2)
+            $monitors = Get-DpaMonitor -DatabaseId $databaseId
+            $monitors | Should -HaveCount 2
+        }
 
-            It 'should return nothing when the monitor is not found' {
-                Get-DpaMonitor -DatabaseId 0 -WarningAction SilentlyContinue | Should -BeNullOrEmpty
-            }
+        It 'should return all monitors' {
+            $monitors = Get-DpaMonitor
+            $monitors | Should -HaveCount 3
+        }
+
+        It 'should return an empty resultset when a monitor is not found' {
+            Get-DpaMonitor -DatabaseId 0 | Should -HaveCount 0
+        }
+
+        It 'should not throw an exception when monitor is not found and -EnableException is not used' {
+            { Get-DpaMonitor -DatabaseId 0 } | Should -Not -Throw 'Not Found'
+        }
+
+        It 'should throw an exception when monitor is not found and -EnableException is used' {
+            { Get-DpaMonitor -DatabaseId 0 -EnableException } | Should -Throw 'Not Found'
         }
     }
 }
