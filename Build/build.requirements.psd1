@@ -12,4 +12,5 @@
     'PSDeploy' = '0.2.5'
     'BuildHelpers' = '1.1.1'
     'Pester' = '4.6.0'
+    'PSFramework' = '0.10.31.176'
 }
