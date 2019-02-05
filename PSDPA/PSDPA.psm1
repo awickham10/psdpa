@@ -1,39 +1,30 @@
-param (
-    [bool] $DebugModule = $false
-)
+$classes = @( Get-ChildItem -Path $PSScriptRoot\Classes\*.ps1 -ErrorAction SilentlyContinue )
+$public  = @( Get-ChildItem -Path $PSScriptRoot\Public\*.ps1 -ErrorAction SilentlyContinue )
+$private = @( Get-ChildItem -Path $PSScriptRoot\Private\*.ps1 -ErrorAction SilentlyContinue )
+$filesToLoad = @([object[]]$classes + [object[]]$private + [object[]]$public)
+$moduleRoot = $PSScriptRoot
 
-# Get public and private function definition files
-$Classes = @( Get-ChildItem -Path $PSScriptRoot\Classes\*.ps1 -ErrorAction SilentlyContinue )
-$Public  = @( Get-ChildItem -Path $PSScriptRoot\Public\*.ps1 -ErrorAction SilentlyContinue )
-$Private = @( Get-ChildItem -Path $PSScriptRoot\Private\*.ps1 -ErrorAction SilentlyContinue )
-$FilesToLoad = @([object[]]$Classes + [object[]]$Public + [object[]]$Private) | Where-Object {$_}
-$ModuleRoot = $PSScriptRoot
+$developerMode = Get-PSFConfigValue -FullName 'psdpa.developer'
+if ($developerMode) {
+    Write-PSFMessage -Level Verbose -Message 'Developer mode enabled'
+}
 
 # Dot source the files
 # Thanks to Bartek, Constatine
 # https://becomelotr.wordpress.com/2017/02/13/expensive-dot-sourcing/
-Foreach($File in $FilesToLoad)
-{
-    Write-Verbose "Importing [$File]"
-    Try
-    {
-        if ($DebugModule)
-        {
-            . $File.FullName
+foreach ($file in $filesToLoad) {
+    Write-PSFMessage -Level Verbose -Message "Importing [$file]"
+    try {
+        if ($developerMode) {
+            . $file.FullName
         }
         else {
-            . (
-                [scriptblock]::Create(
-                    [io.file]::ReadAllText($File.FullName, [Text.Encoding]::UTF8)
-                )
-            )
+            $ExecutionContext.InvokeCommand.InvokeScript($false, ([scriptblock]::Create([io.file]::ReadAllText($file.FullName))), $null, $null)
         }
     }
-    Catch
-    {
-        Write-Error -Message "Failed to import function $($File.fullname)"
-        Write-Error $_
+    catch {
+        Write-PSFMessage -Level Critical -Message "Failed to import function $($file.FullName)" -ErrorRecord $_
     }
 }
 
-Export-ModuleMember -Function $Public.BaseName
+#Export-ModuleMember -Function $public.BaseName

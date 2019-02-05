@@ -8,20 +8,13 @@ $ModuleName = $ENV:BHProjectName
 
 Remove-Module $ENV:BHProjectName -ErrorAction SilentlyContinue
 Import-Module (Join-Path $ENV:BHProjectPath $ModuleName) -Force
+Import-Module (Join-Path -Path (Join-Path $ENV:BHProjectPath $ModuleName) -ChildPath "$ModuleName.psm1")
 
-function Initialize-TestDrive {
-    param (
-        $Tag
-    )
-
-    Copy-Item "$PSScriptRoot\Responses\$Tag\*" "TestDrive:\"
-}
-
-function Get-JsonResponse {
+function Get-MockJsonResponse {
     param (
         $Tag,
         $Response
     )
 
-    Get-Content -Path "TestDrive:\$Tag\$Response.json" -Raw | ConvertFrom-Json
+    Get-Content -Path "$PSScriptRoot\Responses\$Tag\$Response.json" -Raw | ConvertFrom-Json
 }
