@@ -38,8 +38,10 @@ Task Test -Depends Init  {
     $SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
+    $CodeFiles = (Get-ChildItem $ENV:BHModulePath -Recurse -Include "*.psm1","*.ps1").FullName
+
     # Gather test results. Store them in a variable and file
-    $TestResults = Invoke-Pester -Path $ProjectRoot\Tests -PassThru -OutputFormat NUnitXml -OutputFile "$ProjectRoot\$TestFile"
+    $TestResults = Invoke-Pester -Path "$ProjectRoot\Tests" -CodeCoverage $CodeFiles -PassThru -OutputFormat NUnitXml -OutputFile "$ProjectRoot\$TestFile"
     [Net.ServicePointManager]::SecurityProtocol = $SecurityProtocol
 
     # In Appveyor?  Upload our tests! #Abstract this into a function?
