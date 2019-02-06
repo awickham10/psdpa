@@ -1,6 +1,3 @@
-fixes:
-  - "::PSDPA/"
-
 coverage:
   range: 70..95
   round: down

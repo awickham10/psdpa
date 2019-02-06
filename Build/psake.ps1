@@ -39,9 +39,6 @@ Task Test -Depends Init  {
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
     $CodeFiles = (Get-ChildItem $ENV:BHModulePath -Recurse -Include "*.psm1","*.ps1").FullName
-    foreach ($file in $CodeFiles) {
-        Write-Host $file
-    }
 
     # Gather test results. Store them in a variable and file
     $TestResults = Invoke-Pester -Path "$ProjectRoot\Tests" -CodeCoverage $CodeFiles -CodeCoverageOutputFile 'coverage.xml' -PassThru -OutputFormat NUnitXml -OutputFile "$ProjectRoot\$TestFile"
