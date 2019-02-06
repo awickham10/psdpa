@@ -54,6 +54,8 @@ Task Test -Depends Init  {
             "https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)",
             "$ProjectRoot\$TestFile" )
 
+        Write-Host (get-content $TestFile -raw)
+
         $env:PATH = 'C:\msys64\usr\bin;' + $env:PATH
         Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile 'codecov.sh'
         bash codecov.sh -f "$ProjectRoot\$TestFile" -t $ENV:CODECOV_TOKEN
