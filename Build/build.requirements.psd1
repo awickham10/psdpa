@@ -13,4 +13,5 @@
     'BuildHelpers' = '1.1.1'
     'Pester' = '4.6.0'
     'PSFramework' = '0.10.31.176'
+    'PSCodeCovIo' = '1.0.1'
 }
