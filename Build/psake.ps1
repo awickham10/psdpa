@@ -54,11 +54,11 @@ Task Test -Depends Init  {
             "https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)",
             "$ProjectRoot\$TestFile" )
 
-        Write-Host (get-content 'coverage.xml' -raw)
+        Export-CodeCovIoJson -CodeCoverage $TestResults.CodeCoverage -RepoRoot $pwd -Path 'coverage.json'
 
         $env:PATH = 'C:\msys64\usr\bin;' + $env:PATH
         Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile 'codecov.sh'
-        bash codecov.sh -f "coverage.xml" -t $ENV:CODECOV_TOKEN
+        bash codecov.sh -f "coverage.json" -t $ENV:CODECOV_TOKEN
     }
 
     Remove-Item "$ProjectRoot\$TestFile" -Force -ErrorAction SilentlyContinue
