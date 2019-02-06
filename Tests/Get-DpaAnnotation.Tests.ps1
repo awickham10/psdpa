@@ -28,35 +28,101 @@ Describe "$CommandName Unit Tests" -Tag 'Unit' {
 }
 
 Describe "$CommandName Integration Tests" -Tag 'Integration' {
-    Mock -CommandName 'Invoke-RestMethod' -MockWith {
-        Get-MockJsonResponse -Tag 'Annotation' -Response 'SingleAnnotation'
+    BeforeAll {
+        Copy-Item -Path "$PSScriptRoot\Responses\Monitor\" -Destination 'TestDrive:\' -Recurse -Force
+        Copy-Item -Path "$PSScriptRoot\Responses\Annotation\" -Destination 'TestDrive:\' -Recurse -Force
     }
 
-    It 'gets a single annotation' {
+    InModuleScope 'PSDPA' {
+        Mock -CommandName 'Get-DpaAccessToken' -MockWith {
+            New-Object -TypeName 'AccessToken' -ArgumentList ([PSCustomObject] @{
+                access_token = 'myfakeaccesstoken'
+                token_type = 'bearer'
+                expires_in = 900
+            })
+        }
 
-    }
+        Mock -CommandName 'Invoke-RestMethod' -MockWith {
+            Write-PSFMessage -Level 'Verbose' -Message "Invoke-RestMethod called to $Uri"
+            if ($Uri -like '*/databases/*/monitor-information') {
+                Get-Content -Path 'TestDrive:\Monitor\SingleMonitor.json' -Raw | ConvertFrom-Json
+            }
+            elseif ($Uri -like '*/databases/monitor-information') {
+                Get-Content -Path 'TestDrive:\Monitor\MultipleMonitors.json' -Raw | ConvertFrom-Json
+            }
+            elseif ($Uri -like '*/databases/1/annotations?startTime=2018-01-01*') {
+                throw "Filtered by StartTime"
+            }
+            elseif ($Uri -like '*/databases/1/annotations?startTime=*&endTime=2018-01-01*') {
+                throw "Filtered by EndTime"
+            }
+            elseif ($Uri -like '*/databases/1/annotations*') {
+                Get-Content -Path 'TestDrive:\Annotation\Mock1Annotations.json' -Raw | ConvertFrom-Json
+            }
+            elseif ($Uri -like '*/databases/2/annotations*') {
+                Get-Content -Path 'TestDrive:\Annotation\Mock2Annotations.json' -Raw | ConvertFrom-Json
+            }
+            else {
+                throw "Mock for $Uri is not implemented"
+            }
+        }
 
-    Mock -CommandName 'Invoke-RestMethod' -MockWith {
-        Get-MockJsonResponse -Tag 'Annotation' -Response 'MultipleAnnotations'
-    }
+        It 'gets annotations by -DatabaseId' {
+            $databaseId = 1
+            $annotation = Get-DpaAnnotation -DatabaseId $databaseId
+            $annotation | Should -HaveCount 3
+            $annotation.AnnotationId | Should -Be @(1, 2, 3)
 
-    It 'gets multiple annotations' {
+            Assert-MockCalled -CommandName 'Invoke-RestMethod' -Times 1
+        }
 
-    }
+        It 'gets annotations by -MonitorName' {
+            $monitorName = 'MOCK-2'
+            $annotation = Get-DpaAnnotation -MonitorName $monitorName
+            $annotation | Should -HaveCount 3
+            $annotation.AnnotationId | Should -Be @(4, 5, 6)
+        }
 
-    It 'gets annotations for multiple monitors' {
+        $monitor = New-Object -TypeName 'SqlServerMonitor' -ArgumentList ([PSCustomObject] @{
+            DbId = 1
+            Name = 'MOCK-1'
+            Ip = '127.0.0.1'
+            JdbcUrlProperties = 'applicationIntent=readOnly'
+            ConnectionProperties = ''
+            DatabaseType = 'SQL Server'
+            DatabaseVersion = '12.0.6205.1'
+            DatabaseEdition = 'Enterprise Edition; core-based Licensing (64-bit)'
+            MonitoringUser = 'ignite_next'
+            DefaultDbLicenseCategory = 'DPACAT2'
+            AssignedDbLicenseCategory = 'DPACAT2'
+            AssignedVmLicenseCategory = ''
+            MonitorState = 'Monitor Running'
+            OldestMonitoringDate = '2018-12-04T00:00:00.000-07:00'
+            LatestMonitoringDate = '2018-01-02T00:00:00.000-07:00'
+            AgListenerName = ''
+            AgClusterName = ''
+            LinkedToVirtualMachine = $false
+        })
 
-    }
+        It 'gets annotations by -Monitor' {
+            Get-DpaAnnotation -Monitor $monitor | Should -HaveCount 3
+        }
 
-    it 'filters by -StartTime' {
+        It 'gets annotations for multiple monitors' {
+            $databaseId = @(1, 2)
+            Get-DpaAnnotation -DatabaseId $databaseId | Should -HaveCount 6
+        }
 
-    }
+        It 'gets annotations from pipeline' {
+            $monitor | Get-DpaAnnotation | Should -HaveCount 3
+        }
 
-    it 'filters by -EndTime' {
+        It 'filters by -StartTime' {
+            { Get-DpaAnnotation -DatabaseId 1 -StartTime '2018-01-01' } | Should -Throw 'Filtered by StartTime'
+        }
 
-    }
-
-    it 'throws an exception when the monitor is not found' {
-
+        It 'filters by -EndTime' {
+            { Get-DpaAnnotation -DatabaseId 1 -EndTime '2018-01-01' } | Should -Throw 'Filtered by EndTime'
+        }
     }
 }
