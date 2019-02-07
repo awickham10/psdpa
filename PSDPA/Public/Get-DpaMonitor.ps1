@@ -3,7 +3,7 @@ function Get-DpaMonitor {
     param (
         [Parameter(ParameterSetName = 'ByDatabaseId')]
         [ValidateNotNullOrEmpty()]
-        $DatabaseId,
+        [int[]] $DatabaseId,
 
         [Parameter(ParameterSetName = 'ByName')]
         [ValidateNotNullOrEmpty()]
@@ -13,7 +13,7 @@ function Get-DpaMonitor {
         [switch] $EnableException
     )
 
-    if ($PSBoundParameters.ContainsKey('DatabaseId') -and -not ($DatabaseId -is [array])) {
+    if ($PSBoundParameters.ContainsKey('DatabaseId') -and $DatabaseId.Count -eq 1) {
         Write-PSFMessage -Level Verbose -Message 'Getting a single monitor'
         $endpoint = "/databases/$DatabaseId/monitor-information"
     }

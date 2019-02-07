@@ -31,14 +31,23 @@ Describe "$CommandName Integration Tests" -Tag 'Integration' {
             }
 
             Mock -CommandName 'Invoke-RestMethod' -MockWith {
-                Get-Content -Path 'TestDrive:\SingleMonitor.json' -Raw | ConvertFrom-Json
+                Get-Content -Path 'TestDrive:\MultipleMonitors.json' -Raw | ConvertFrom-Json
             }
 
             It 'should return a single monitor' {
                 $databaseId = 1
-                $monitor = @(Get-DpaMonitor -DatabaseId $databaseId)
+                $monitor = Get-DpaMonitor -DatabaseId $databaseId
                 $monitor | Should -HaveCount 1
                 $monitor.DatabaseId | Should -BeExactly $databaseId
+
+                Assert-MockCalled -CommandName 'Invoke-RestMethod' -Times 1
+            }
+
+            It 'should get monitors by name' {
+                $monitorName = 'MOCK-1'
+                $monitor = Get-DpaMonitor -MonitorName $monitorName
+                $monitor | Should -HaveCount 1
+                $monitor.Name | Should -Be $monitorName
 
                 Assert-MockCalled -CommandName 'Invoke-RestMethod' -Times 1
             }
@@ -65,14 +74,20 @@ Describe "$CommandName Integration Tests" -Tag 'Integration' {
 
             It 'should return an empty resultset when a monitor is not found' {
                 Get-DpaMonitor -DatabaseId 0 | Should -HaveCount 0
+
+                Assert-MockCalled -CommandName 'Invoke-RestMethod' -Times 1
             }
 
             It 'should not throw an exception when monitor is not found and -EnableException is not used' {
                 { Get-DpaMonitor -DatabaseId 0 } | Should -Not -Throw 'Not Found'
+
+                Assert-MockCalled -CommandName 'Invoke-RestMethod' -Times 1
             }
 
             It 'should throw an exception when monitor is not found and -EnableException is used' {
                 { Get-DpaMonitor -DatabaseId 0 -EnableException } | Should -Throw 'Not Found'
+
+                Assert-MockCalled -CommandName 'Invoke-RestMethod' -Times 1
             }
         }
     }
