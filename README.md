@@ -1,12 +1,11 @@
 # PSDPA Solarwinds DPA PowerShell Module (Unofficial)
+PSDPA is an open source PowerShell module for the Solarwinds DPA REST API. The
+goal of the module is to provide complete PowerShell coverage for the API.
 
 | Branch | Status |
 |:--- |:--- |
 | Master | [![Master Build Status](https://ci.appveyor.com/api/projects/status/i165eqibj5cvger3/branch/master?svg=true)](https://ci.appveyor.com/project/sqlmdr/psdpa/branch/master) [![Master Code Coverage](https://codecov.io/gh/awickham10/psdpa/branch/master/graph/badge.svg)](https://codecov.io/gh/awickham10/psdpa) |
 | Development |[![Development Build Status](https://ci.appveyor.com/api/projects/status/i165eqibj5cvger3/branch/development?svg=true)](https://ci.appveyor.com/project/sqlmdr/psdpa/branch/development) [![Development Code Coverage](https://codecov.io/gh/awickham10/psdpa/branch/development/graph/badge.svg)](https://codecov.io/gh/awickham10/psdpa) |
-
-PSDPA is an open source PowerShell module for the Solarwinds DPA REST API. The
-goal of the module is to provide complete PowerShell coverage for the API.
 
 ## Instructions
 ``` powershell
