@@ -32,17 +32,18 @@ Get-DpaMonitor
 * Get-DpaConfig - Complete
 
 ### Monitor
-* Get-DpaMonitor - Test Coverage Needed
+* Get-DpaMonitor - Needs Help Documentation
 * Start-DpaMonitor - Test Coverage Needed
 * Stop-DpaMonitor - Test Coverage Needed
 * Set-DpaMonitorPassword - Not Implemented
 * Add-DpaMonitor - Not Implemented
 
 ### Licensing
-* Get-DpaLicense - Not Implemented
+* Get-DpaLicense - Needs Help Documentation
+* Get-DpaMonitorLicense - Needs Help Documentation
 * Set-DpaLicense - Not Implemented
 
 ### Annotations
-* Get-DpaAnnotation - Test Coverage Needed
+* Get-DpaAnnotation - Complete
 * Add-DpaAnnotation - Test Coverage Needed
 * Remove-DpaAnnotation - Not Implemented
