@@ -45,7 +45,7 @@ Describe "$CommandName Integration Tests" -Tag 'Integration' {
         Mock -CommandName 'Invoke-RestMethod' -MockWith {
             Write-PSFMessage -Level 'Verbose' -Message "Invoke-RestMethod called to $Uri"
             if ($Uri -like '*/databases/*/monitor-information') {
-                Get-Content -Path 'TestDrive:\Monitor\SingleMonitor.json' -Raw | ConvertFrom-Json
+                Get-Content -Path 'TestDrive:\Monitor\MultipleMonitors.json' -Raw | ConvertFrom-Json
             }
             elseif ($Uri -like '*/databases/monitor-information') {
                 Get-Content -Path 'TestDrive:\Monitor\MultipleMonitors.json' -Raw | ConvertFrom-Json
