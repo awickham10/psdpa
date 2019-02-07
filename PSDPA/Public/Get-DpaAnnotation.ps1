@@ -97,7 +97,7 @@ function Get-DpaAnnotation {
 
             $response = Invoke-DpaRequest -Endpoint $endpoint -Method 'Get' -Parameters $parameters
             foreach ($annotation in $response.data) {
-                New-Object -TypeName 'Annotation' -ArgumentList $annotation
+                New-Object -TypeName 'Annotation' -ArgumentList $monitorObject, $annotation
             }
         }
     }

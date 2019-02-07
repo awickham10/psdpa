@@ -124,5 +124,11 @@ Describe "$CommandName Integration Tests" -Tag 'Integration' {
         It 'filters by -EndTime' {
             { Get-DpaAnnotation -DatabaseId 1 -EndTime '2018-01-01' } | Should -Throw 'Filtered by EndTime'
         }
+
+        It 'has the monitor object associated with it' {
+            $annotation = Get-DpaAnnotation -DatabaseId 1
+            $annotation.Monitor | Should -Not -BeNullOrEmpty
+            $annotation.Monitor[0] -is [Monitor] | Should -Be $true
+        }
     }
 }

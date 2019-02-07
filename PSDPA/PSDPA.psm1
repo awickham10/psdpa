@@ -1,4 +1,8 @@
-$Classes = @( Get-ChildItem -Path "$PSScriptRoot\Classes\*.ps1" -Recurse )
+$Classes = @(
+    (Get-ChildItem -Path "$PSScriptRoot\Classes\AccessToken.ps1"),
+    (Get-ChildItem -Path "$PSScriptRoot\Classes\Monitor.ps1"),
+    (Get-ChildItem -Path "$PSScriptRoot\Classes\Annotation.ps1")
+)
 $Private = @( Get-ChildItem -Path "$PSScriptRoot\Private\*.ps1" -Recurse )
 $Public = @( Get-ChildItem -Path "$PSScriptRoot\Public\*.ps1" -Recurse )
 
