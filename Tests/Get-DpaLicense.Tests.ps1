@@ -38,7 +38,6 @@ Describe "$CommandName Integration Tests" -Tag 'Integration' {
         It 'returns all license information' {
             $licenses = Get-DpaLicense
             $licenses | Should -HaveCount 4
-            $licenses[0] -is [License] | Should -Be $true
 
             Assert-MockCalled -CommandName 'Invoke-RestMethod' -Times 1
         }

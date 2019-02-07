@@ -24,6 +24,12 @@ function Get-DpaLicense {
     }
 
     foreach ($license in $response) {
-        New-Object -TypeName 'License' -ArgumentList $license
+        [PSCustomObject] @{
+            Product = $license.licenseProduct
+            Category = $license.licenseCategory
+            Available = [int] $license.licensesAvailable
+            Consumed = [int] $license.licensesConsumed
+            Total = [int] $license.licensesAvailable + [int] $license.licensesConsumed
+        }
     }
 }
