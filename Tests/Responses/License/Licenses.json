@@ -1,0 +1,28 @@
+{
+    "data": [
+        {
+            "licenseProduct": "DPACAT1",
+            "licenseCategory": "DPA_DB",
+            "licensesAvailable": 100,
+            "licensesConsumed": 22
+        },
+        {
+            "licenseProduct": "DPACAT2",
+            "licenseCategory": "DPA_DB",
+            "licensesAvailable": 100,
+            "licensesConsumed": 16
+        },
+        {
+            "licenseProduct": "DPAAzureSQL",
+            "licenseCategory": "DPA_DB",
+            "licensesAvailable": 0,
+            "licensesConsumed": 0
+        },
+        {
+            "licenseProduct": "DPAVM",
+            "licenseCategory": "DPA_VM",
+            "licensesAvailable": 100,
+            "licensesConsumed": 12
+        }
+    ]
+}
