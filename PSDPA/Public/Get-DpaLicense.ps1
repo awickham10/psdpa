@@ -1,3 +1,38 @@
+<#
+
+.SYNOPSIS
+Gets a DPA licensing summary
+
+.DESCRIPTION
+Gets a product breakdown of licenses from DPA. This includes product, category,
+number of licenses available, used, and total.
+
+.PARAMETER Product
+Product to get licenses for. If not specified, all products will be included.
+This is either DPACAT1, DPACAT2, DPAAzureSQL, or DPAVM.
+
+.PARAMETER Category
+Category of products to get licenses for. At the moement this is either
+database (DPA_DB) or VM (DPA_VM).
+
+.EXAMPLE
+Get-DpaLicense
+
+Gets a summary for all license types.
+
+.EXAMPLE
+Get-DpaLicense -Product DPACAT1
+
+Gets DPACAT1 licensing.
+
+.NOTES
+Author: Andrew Wickham ( @awickham )
+
+Copyright: (C) Andrew Wickham, andrew@awickham.com
+License: MIT https://opensource.org/licenses/MIT
+
+#>
+
 function Get-DpaLicense {
     [CmdletBinding()]
     param (
