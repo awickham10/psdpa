@@ -4,6 +4,8 @@
 environment:
   NugetApiKey:
     secure: 76Y+lNAkDCWwiO9jWmihZBlOKPD2rtU3b+dd5Fpkz34WtXFqTKDQFp30IA60Cj3e
+  CODECOV_TOKEN:
+    secure: xn88TAvqQYjOWy5VnVNLLDNIeYi75NcrDMZdcEoAFPpW91KcdPSwk4NnvUxLI9hG
 
 os: WMF 5
 
