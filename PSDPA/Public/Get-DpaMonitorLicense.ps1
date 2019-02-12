@@ -1,3 +1,47 @@
+<#
+
+.SYNOPSIS
+Gets licensing details for a monitored server.
+
+.DESCRIPTION
+Gets what licenses are allocated to a server in DPA.
+
+.PARAMETER DatabaseId
+The Database IDs of the monitor.
+
+.PARAMETER MonitorName
+The name(s) of the monitor.
+
+.PARAMETER Monitor
+The monitor object(s).
+
+.PARAMETER EnableException
+Replaces user friendly yellow warnings with bloody red exceptions of doom! Use
+this if you want the function to throw terminating errors you want to catch.
+
+.EXAMPLE
+Get-DpaMonitor | Get-DpaMonitorLicense
+
+Gets licensing details for all monitored servers.
+
+.EXAMPLE
+Get-DpaMonitorLicense -DatabaseId 1
+
+Gets licensing details for Database ID 1
+
+.EXAMPLE
+Get-DpaMonitorLicense -MonitorName 'MyMonitoredServer'
+
+Gets licensing details for MyMonitoredServer.
+
+.NOTES
+Author: Andrew Wickham ( @awickham )
+
+Copyright: (C) Andrew Wickham, andrew@awickham.com
+License: MIT https://opensource.org/licenses/MIT
+
+#>
+
 function Get-DpaMonitorLicense {
     [CmdletBinding(DefaultParameterSetName = 'ByName')]
     param (
