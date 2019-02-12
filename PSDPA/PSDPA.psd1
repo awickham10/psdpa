@@ -24,7 +24,7 @@
     Description = 'Simple PowerShell module for the Solarwinds DPA API'
 
     # Minimum version of the Windows PowerShell engine required by this module
-    PowerShellVersion = '4.0'
+    PowerShellVersion = '5.0'
 
     # Name of the Windows PowerShell host required by this module
     # PowerShellHostName = ''
@@ -99,7 +99,7 @@
             # IconUri = ''
 
             # ReleaseNotes of this module
-            ReleaseNotes = 'Initial "it might not blend" release'
+            ReleaseNotes = 'MVP release for DPA. Getting everything to work.'
 
         } # End of PSData hashtable
 
