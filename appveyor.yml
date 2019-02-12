@@ -2,7 +2,7 @@
 
 #Publish to PowerShell Gallery with this key
 environment:
-  NuGetApiKey:
+  NugetApiKey:
     secure: 76Y+lNAkDCWwiO9jWmihZBlOKPD2rtU3b+dd5Fpkz34WtXFqTKDQFp30IA60Cj3e
 
 os: WMF 5
