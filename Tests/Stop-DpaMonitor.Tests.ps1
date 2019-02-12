@@ -6,8 +6,9 @@ Describe "$CommandName Unit Tests" -Tag 'Unit' {
         $command = Get-Command -Name $CommandName
 
         $testCases = @(
-            @{ Name = 'DatabaseId'; Mandatory = $true },
+            @{ Name = 'DatabaseId'; Mandatory = $false },
             @{ Name = 'MonitorName'; Mandatory = $false },
+            @{ Name = 'Monitor'; Mandatory = $false },
             @{ Name = 'EnableException'; Mandatory = $false }
         )
         It 'should have a <Name> parameter' -TestCases $testCases {
