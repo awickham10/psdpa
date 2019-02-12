@@ -67,12 +67,12 @@ function Start-DpaMonitor {
     }
 
     process {
-        foreach ($monitorObject in $monitor) {
+        foreach ($monitorObject in $Monitor) {
             try {
-                $response = Invoke-DpaRequest -Endpoint "/databases/$($monitor.Dbid)/monitor-status" -Method 'PUT' -Request $request
+                $response = Invoke-DpaRequest -Endpoint "/databases/$($monitorObject.Dbid)/monitor-status" -Method 'PUT' -Request $request
             }
             catch {
-                Stop-PSFFunction -Message "Could not start the monitor" -EnableException:$EnableException -ErrorRecord $_ -Target $monitor.Name
+                Stop-PSFFunction -Message "Could not start the monitor" -EnableException:$EnableException -ErrorRecord $_ -Target $monitorObject.Name
             }
         }
     }
