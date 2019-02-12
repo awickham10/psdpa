@@ -1,3 +1,39 @@
+<#
+
+.SYNOPSIS
+Gets a DPA monitor (server)
+
+.DESCRIPTION
+Gets a registered server (monitor) from DPA. This can be done by name or ID.
+
+.PARAMETER DatabaseId
+Database ID of the monitor (db_id in the URL).
+
+.PARAMETER MonitorName
+Name of the monitor.
+
+.PARAMETER EnableException
+Replaces user friendly yellow warnings with bloody red exceptions of doom! Use
+this if you want the function to throw terminating errors you want to catch.
+
+.EXAMPLE
+Get-DpaMonitor -DatabaseId 1
+
+Gets the information for db_id = 1
+
+.EXAMPLE
+Get-DpaMonitor -MonitorName 'MyMonitoredServer'
+
+Gets the information for MyMonitoredServer
+
+.NOTES
+Author: Andrew Wickham ( @awickham )
+
+Copyright: (C) Andrew Wickham, andrew@awickham.com
+License: MIT https://opensource.org/licenses/MIT
+
+#>
+
 function Get-DpaMonitor {
     [CmdletBinding(DefaultParameterSetName = 'All')]
     param (
