@@ -45,4 +45,4 @@ Get-DpaMonitor
 ### Annotations
 * Get-DpaAnnotation - Complete
 * Add-DpaAnnotation - Test Coverage Needed
-* Remove-DpaAnnotation - Not Implemented
+* Remove-DpaAnnotation - Complete
