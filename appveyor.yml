@@ -10,13 +10,13 @@ environment:
 os: WMF 5
 
 cache:
-  - C:\Program Files\WindowsPowerShell\Modules\PSScriptAnalyzer -> Build\build.requirements.psd1
-  - C:\Program Files\WindowsPowerShell\Modules\Pester -> Build\build.requirements.psd1
-  - C:\Program Files\WindowsPowerShell\Modules\PSCodeCovIo -> Build\build.requirements.psd1
-  - C:\Program Files\WindowsPowerShell\Modules\PSFramework -> Build\build.requirements.psd1
-  - C:\Program Files\WindowsPowerShell\Modules\BuildHelpers -> Build\build.requirements.psd1
-  - C:\Program Files\WindowsPowerShell\Modules\PSDeploy -> Build\build.requirements.psd1
-  - C:\Program Files\WindowsPowerShell\Modules\psake -> Build\build.requirements.psd1
+  - C:\Users\appveyor\Documents\WindowsPowerShell\Modules\PSScriptAnalyzer -> Build\build.requirements.psd1
+  - C:\Users\appveyor\Documents\WindowsPowerShell\Modules\Pester -> Build\build.requirements.psd1
+  - C:\Users\appveyor\Documents\WindowsPowerShell\Modules\PSCodeCovIo -> Build\build.requirements.psd1
+  - C:\Users\appveyor\Documents\WindowsPowerShell\Modules\PSFramework -> Build\build.requirements.psd1
+  - C:\Users\appveyor\Documents\WindowsPowerShell\Modules\BuildHelpers -> Build\build.requirements.psd1
+  - C:\Users\appveyor\Documents\WindowsPowerShell\Modules\PSDeploy -> Build\build.requirements.psd1
+  - C:\Users\appveyor\Documents\WindowsPowerShell\Modules\psake -> Build\build.requirements.psd1
 
 # Skip on updates to the readme.
 # We can force this by adding [skip ci] or [ci skip] anywhere in commit message
