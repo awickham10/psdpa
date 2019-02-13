@@ -1,6 +1,11 @@
 . $PSScriptRoot\Shared.ps1
 $Path = Split-Path -Parent $MyInvocation.MyCommand.Path
-$ModulePath = (Get-Item $Path).Parent.FullName + '\' + $ModuleName
+if ($ENV:BHProjectPath) {
+    $ModulePath = Join-Path $ENV:BHProjectPath $ModuleName
+} else {
+    $ModulePath = (Get-Item $Path).Parent.FullName + '\' + $ModuleName
+}
+Write-Host "ModulePath: $ModulePath"
 
 function Split-ArrayInParts($array, [int]$parts) {
     #splits an array in "equal" parts
@@ -113,17 +118,19 @@ Describe "$ModuleName ScriptAnalyzerErrors" -Tag 'Compliance' {
 }
 
 Describe "$ModuleName Tests missing" -Tag 'Tests' {
-    $functions = Get-ChildItem .\Public\ -Recurse -Include *.ps1
+    $functions = Get-ChildItem (Join-Path -Path $ModulePath -ChildPath 'Public') -Recurse -Include *.ps1
     Context "Every function should have tests" {
         foreach ($f in $functions) {
             It "$($f.basename) has a tests.ps1 file" {
                 Test-Path "Tests\$($f.basename).Tests.ps1" | Should Be $true
             }
+            <#
             If (Test-Path "Tests\$($f.basename).Tests.ps1") {
                 It "$($f.basename) has validate parameters unit test" {
                     "Tests\$($f.basename).Tests.ps1" | should FileContentMatch 'Context "Validate parameters"'
                 }
             }
+            #>
         }
     }
 }
