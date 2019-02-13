@@ -8,6 +8,7 @@
         }
     }
 
+    'PSScriptAnalyzer' = '1.17.1'
     'psake' = '4.7.0'
     'PSDeploy' = '0.2.5'
     'BuildHelpers' = '1.1.1'
