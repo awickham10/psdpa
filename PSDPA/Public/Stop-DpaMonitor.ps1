@@ -55,8 +55,7 @@ function Stop-DpaMonitor {
     begin {
         if ($PSCmdlet.ParameterSetName -eq 'ByName') {
             $Monitor = Get-DpaMonitor -MonitorName $MonitorName
-        }
-        elseif ($PSCmdlet.ParameterSetName -eq 'ByDatabaseId') {
+        } elseif ($PSCmdlet.ParameterSetName -eq 'ByDatabaseId') {
             $Monitor = Get-DpaMonitor -DatabaseId $DatabaseId
         }
 
@@ -70,8 +69,7 @@ function Stop-DpaMonitor {
             if ($PSCmdlet.ShouldProcess($monitor.Name, 'Stop Monitor')) {
                 try {
                     $response = Invoke-DpaRequest -Endpoint "/databases/$($monitorObject.Dbid)/monitor-status" -Method 'PUT' -Request $request
-                }
-                catch {
+                } catch {
                     Stop-PSFFunction -Message "Could not stop the monitor" -ErrorRecord $_ -Target $monitorObject.Name
                 }
             }

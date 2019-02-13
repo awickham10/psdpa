@@ -92,8 +92,7 @@ function Add-DpaAnnotation {
     begin {
         if ($PSCmdlet.ParameterSetName -eq 'ByName') {
             $Monitor = Get-DpaMonitor -MonitorName $MonitorName
-        }
-        elseif ($PSCmdlet.ParameterSetName -eq 'ByDatabaseId') {
+        } elseif ($PSCmdlet.ParameterSetName -eq 'ByDatabaseId') {
             $Monitor = Get-DpaMonitor -DatabaseId $DatabaseId
         }
     }
@@ -103,10 +102,10 @@ function Add-DpaAnnotation {
             $endpoint = "/databases/$($monitorObject.DatabaseId)/annotations"
 
             $request = @{
-                'title' = $Title
+                'title'       = $Title
                 'description' = $Description
-                'createdBy' = $CreatedBy
-                'time' = $Time.ToString("yyyy-MM-ddTHH\:mm\:sszzz")
+                'createdBy'   = $CreatedBy
+                'time'        = $Time.ToString("yyyy-MM-ddTHH\:mm\:sszzz")
             }
 
             $response = Invoke-DpaRequest -Endpoint $endpoint -Method 'Post' -Request $request

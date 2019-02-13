@@ -40,8 +40,7 @@ function Remove-DpaAnnotation {
         $endpoint = "databases/$($annotationObject.DatabaseId)/annotations/$($annotationObject.AnnotationId)"
         try {
             $response = Invoke-DpaRequest -Endpoint $endpoint -Method 'Delete'
-        }
-        catch {
+        } catch {
             Stop-PSFFunction -Message "Could not remove annotation" -EnableException:$EnableException -ErrorRecord $_
         }
     }

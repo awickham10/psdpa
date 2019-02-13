@@ -27,8 +27,8 @@ function Invoke-DpaRequest {
     }
 
     $headers = @{
-        'Accept' = 'application/json'
-        'Content-Type' = 'application/json;charset=UTF-8'
+        'Accept'        = 'application/json'
+        'Content-Type'  = 'application/json;charset=UTF-8'
         'Authorization' = $AccessToken.ToAuthorizationHeader()
     }
 
@@ -48,9 +48,9 @@ function Invoke-DpaRequest {
     }
 
     $params = @{
-        'Uri' = $uri
+        'Uri'     = $uri
         'Headers' = $headers
-        'Method' = $Method
+        'Method'  = $Method
     }
     if ($PSBoundParameters.ContainsKey('Request')) {
         $params['Body'] = $Request | ConvertTo-Json

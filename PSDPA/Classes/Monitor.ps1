@@ -74,11 +74,11 @@ class MonitorFactory {
     static [Monitor[]] $Monitors
 
     static [Object] getByType ([Object] $O) {
-        return [MonitorFactory]::Monitors.Where({$_ -is $O})
+        return [MonitorFactory]::Monitors.Where( {$_ -is $O})
     }
 
     static [Object] getByName ([String] $Name) {
-        return [MonitorFactory]::Monitors.Where({$_.Name -eq $Name})
+        return [MonitorFactory]::Monitors.Where( {$_.Name -eq $Name})
     }
 
     [Monitor] New ([PSCustomObject] $Json) {

@@ -7,7 +7,7 @@ function Get-DpaAccessToken {
     $refreshToken = (Get-DpaConfig -Name 'refreshtoken').Value
 
     $request = @{
-        grant_type = 'refresh_token'
+        grant_type    = 'refresh_token'
         refresh_token = $refreshToken
     }
 
@@ -18,8 +18,7 @@ function Get-DpaAccessToken {
         Set-PSFConfig -Module 'psdpa' -Name 'accesstoken' -Value $accessToken
         $PSDefaultParameterValues['Invoke-DpaRequest:AccessToken'] = $accessToken
         return $accessToken
-    }
-    catch {
+    } catch {
         Stop-PSFFunction -Message "Could not obtain access token" -ErrorRecord $_ -EnableException $EnableException
     }
 }

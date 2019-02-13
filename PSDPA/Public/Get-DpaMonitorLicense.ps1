@@ -60,8 +60,7 @@ function Get-DpaMonitorLicense {
     begin {
         if ($PSCmdlet.ParameterSetName -eq 'ByName') {
             $Monitor = Get-DpaMonitor -MonitorName $MonitorName
-        }
-        elseif ($PSCmdlet.ParameterSetName -eq 'ByDatabaseId') {
+        } elseif ($PSCmdlet.ParameterSetName -eq 'ByDatabaseId') {
             $Monitor = Get-DpaMonitor -DatabaseId $DatabaseId
         }
     }
@@ -72,9 +71,9 @@ function Get-DpaMonitorLicense {
             $response = Invoke-DpaRequest -Endpoint $endpoint -Method 'Get'
 
             [PSCustomObject] @{
-                ServerName = $response.data.serverName
-                OverLicensed = $response.data.overLicensed
-                VmLicenseProduct = $response.data.vmLicenseProduct
+                ServerName                = $response.data.serverName
+                OverLicensed              = $response.data.overLicensed
+                VmLicenseProduct          = $response.data.vmLicenseProduct
                 PerformanceLicenseProduct = $response.data.performanceLicenseProduct
             }
         }

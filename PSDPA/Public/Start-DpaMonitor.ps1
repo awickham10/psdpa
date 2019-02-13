@@ -56,8 +56,7 @@ function Start-DpaMonitor {
     begin {
         if ($PSCmdlet.ParameterSetName -eq 'ByName') {
             $Monitor = Get-DpaMonitor -MonitorName $MonitorName
-        }
-        elseif ($PSCmdlet.ParameterSetName -eq 'ByDatabaseId') {
+        } elseif ($PSCmdlet.ParameterSetName -eq 'ByDatabaseId') {
             $Monitor = Get-DpaMonitor -DatabaseId $DatabaseId
         }
 
@@ -70,8 +69,7 @@ function Start-DpaMonitor {
         foreach ($monitorObject in $Monitor) {
             try {
                 $response = Invoke-DpaRequest -Endpoint "/databases/$($monitorObject.Dbid)/monitor-status" -Method 'PUT' -Request $request
-            }
-            catch {
+            } catch {
                 Stop-PSFFunction -Message "Could not start the monitor" -EnableException:$EnableException -ErrorRecord $_ -Target $monitorObject.Name
             }
         }

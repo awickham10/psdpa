@@ -58,7 +58,7 @@ function Add-DpaMonitor {
     }
 
     $request = @{
-        serverName = $ServerName
+        serverName   = $ServerName
         databaseType = $DatabaseType.ToUpper()
     }
 
@@ -97,8 +97,7 @@ function Add-DpaMonitor {
         if ($PSBoundParameters.ContainsKey('MonitoringCredential') -and $DatabaseType -ne 'Db2') {
             $request['monitoringUser'] = $MonitoringCredential.UserName
             $request['monitoringUserPassword'] = $MonitoringCredential.GetNetworkCredential().Password
-        }
-        else {
+        } else {
             $request['monitoringUser'] = $Credential.UserName
             $request['monitoringUserPassword'] = $Credential.GetNetworkCredential().Password
         }
@@ -106,8 +105,7 @@ function Add-DpaMonitor {
 
     try {
         $response = Invoke-DpaRequest -Endpoint '/databases/register-monitor' -Request $request -Method 'POST'
-    }
-    catch {
+    } catch {
         Stop-PSFFunction -Message "Could not register monitor" -ErrorRecord $_
         return
     }
