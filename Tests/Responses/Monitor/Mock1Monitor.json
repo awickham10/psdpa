@@ -1,0 +1,28 @@
+{
+    "data": {
+        "dbId": 1,
+        "name": "MOCK-1",
+        "ip": "127.0.0.1",
+        "jdbcUrlProperties": "applicationIntent=readOnly",
+        "connectionProperties": "",
+        "databaseType": "SQL Server",
+        "databaseVersion": "12.0.6205.1",
+        "databaseEdition": "Enterprise Edition: Core-based Licensing (64-bit)",
+        "monitoringUser": "ignite_next",
+        "defaultDbLicenseCategory": "DPACAT2",
+        "assignedDbLicenseCategory": "DPACAT2",
+        "assignedVmLicenseCategory": "",
+        "monitorState": "Monitor Running",
+        "oldestMonitoringDate": "2018-12-04T00:00:00.0000-07:00",
+        "latestMonitoringDate": "2019-01-02T00:00:00.000-07:00",
+        "agListenerName": "",
+        "agClusterName": "",
+        "agName": "",
+        "racInfo": "",
+        "rac": false,
+        "linkedToVirtualMachine": false,
+        "rds": false,
+        "pdb": false,
+        "ebusiness": false
+    }
+}

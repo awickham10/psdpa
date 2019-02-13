@@ -1,0 +1,28 @@
+{
+    "data": [
+        {
+            "id": 4,
+            "title": "MOCK-2 ANNOTATION-1",
+            "description": "API Test Event created by DPA API",
+            "createdBy": "DPA API",
+            "time": "2017-12-04T18:13:04-07:00",
+            "type": "Custom"
+        },
+        {
+            "id": 5,
+            "title": "MOCK-2 ANNOTATION-2",
+            "description": "API Test Event created by DPA API",
+            "createdBy": "DPA API",
+            "time": "2018-12-04T18:13:04-07:00",
+            "type": "Custom"
+        },
+        {
+            "id": 6,
+            "title": "MOCK-2 ANNOTATION-3",
+            "description": "API Test Event created by DPA API",
+            "createdBy": "DPA API",
+            "time": "2018-12-04T18:13:04-07:00",
+            "type": "Custom"
+        }
+    ]
+}
