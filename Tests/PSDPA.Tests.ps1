@@ -5,7 +5,6 @@ if ($ENV:BHProjectPath) {
 } else {
     $ModulePath = (Get-Item $Path).Parent.FullName + '\' + $ModuleName
 }
-Write-Host "ModulePath: $ModulePath"
 
 function Split-ArrayInParts($array, [int]$parts) {
     #splits an array in "equal" parts

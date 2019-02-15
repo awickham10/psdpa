@@ -37,7 +37,7 @@ License: MIT https://opensource.org/licenses/MIT
 #>
 
 function Stop-DpaMonitor {
-    [CmdletBinding(DefaultParameterSetName = 'ByName')]
+    [CmdletBinding(DefaultParameterSetName = 'ByName', SupportsShouldProcess)]
     param (
         [Parameter(ParameterSetName = 'ByDatabaseId', Mandatory)]
         [int[]] $DatabaseId,
