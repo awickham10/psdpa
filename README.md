@@ -27,22 +27,22 @@ Get-DpaMonitor
 
 ## Functions
 ### Configuration
-* Set-DpaConfig - Complete
-* Get-DpaConfig - Complete
+*  Set-DpaConfig - Complete
+*  Get-DpaConfig - Complete
 
 ### Monitor
-* Get-DpaMonitor - Complete
-* Start-DpaMonitor - Complete
-* Stop-DpaMonitor - Complete
-* Set-DpaMonitorPassword - Not Implemented
-* Add-DpaMonitor - Not Implemented
+*  Get-DpaMonitor - Complete
+*  Start-DpaMonitor - Complete
+*  Stop-DpaMonitor - Complete
+*  Set-DpaMonitorPassword - Not Implemented
+*  Add-DpaMonitor - Not Implemented
 
 ### Licensing
-* Get-DpaLicense - Complete
-* Get-DpaMonitorLicense - Complete
-* Set-DpaLicense - Not Implemented
+*  Get-DpaLicense - Complete
+*  Get-DpaMonitorLicense - Complete
+*  Set-DpaLicense - Not Implemented
 
 ### Annotations
-* Get-DpaAnnotation - Complete
-* Add-DpaAnnotation - Test Coverage Needed
-* Remove-DpaAnnotation - Complete
+*  Get-DpaAnnotation - Complete
+*  Add-DpaAnnotation - Test Coverage Needed
+*  Remove-DpaAnnotation - Complete
