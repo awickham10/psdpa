@@ -17,13 +17,8 @@ function Invoke-DpaRequest {
         $Parameters
     )
 
-    if (-not $PSBoundParameters.ContainsKey('AccessToken')) {
+    if (-not $PSBoundParameters.ContainsKey('AccessToken') -or -not $AccessToken.IsValid()) {
         $AccessToken = Get-DpaAccessToken
-    }
-
-    if (-not $AccessToken.IsValid()) {
-        Stop-PSFFunction -Message "You do not have a valid access token"
-        return
     }
 
     $headers = @{
