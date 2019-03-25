@@ -6,6 +6,10 @@ environment:
     secure: 76Y+lNAkDCWwiO9jWmihZBlOKPD2rtU3b+dd5Fpkz34WtXFqTKDQFp30IA60Cj3e
   CODECOV_TOKEN:
     secure: xn88TAvqQYjOWy5VnVNLLDNIeYi75NcrDMZdcEoAFPpW91KcdPSwk4NnvUxLI9hG
+  PSDPA_BASEURI:
+    secure: /Ah4/9vQOkXmMZdB8SrlHqueDF5uMC/ME3pc8jgl7qqiR1rpG+W3mjyeR+FbxOPh
+  PSDPA_TOKEN:
+    secure: kTA548nZiwq71GIiCau5wvSPTVNn9dVfaHC//NuCKo2fljzkpL+niUwjfOVvVIbDPf8zOxznxspn1GrEkm27Dg8XGHyd9XfD8leyiKTp0gavhNLVkrVzG1/Zqj6eyFO7IKVGYB4hs7nJJasuAFxVtBjcR9UZdFEbw8d/Z06YqQo=
 
 os: WMF 5
 

@@ -6,5 +6,13 @@ if (Test-Path -Path $localConstants) {
     return
 }
 
-Set-PSFConfig -Module 'PSDPA' -Name 'baseuri' -Value 'https://myfakedpaserver:8124/iwc/api'
-Set-PSFConfig -Module 'PSDPA' -Name 'refreshtoken' -Value 'thisismyrefreshtoken'
+if (-not $ENV:PSDPA_URI) {
+    Stop-PSFFunction -Message "Environment variable PSDPA_URI is not set" -EnableException
+}
+
+if (-not $ENV:PSDPA_TOKEN) {
+    Stop-PSFFunction -Message "Environment variable PSDPA_TOKEN is not set" -EnableException
+}
+
+Set-PSFConfig -Module 'PSDPA' -Name 'baseuri' -Value $ENV:PSDPA_URI
+Set-PSFConfig -Module 'PSDPA' -Name 'refreshtoken' -Value $ENV:PSDPA_TOKEN
