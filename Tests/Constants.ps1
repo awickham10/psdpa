@@ -1,6 +1,8 @@
-$localConstants = Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -ChildPath 'Constants.Local.ps1'
+Write-PSFMessage -Level Verbose -Message 'Loading constants from Constants.ps1'
+
+$localConstants = Join-Path -Path (Split-Path -Path $ConstantsFile -Parent) -ChildPath 'Constants.Local.ps1'
 if (Test-Path -Path $localConstants) {
-    .\$localConstants
+    . $localConstants
     return
 }
 
