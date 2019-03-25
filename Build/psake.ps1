@@ -38,8 +38,12 @@ Task Test -Depends Init  {
         Stop-PSFFunction -Message "Environment variable PSDPA_AZ is not set" -EnableException $true
     }
 
+    if (-not $ENV:PSDPA_AZ_APP) {
+        Stop-PSFFunction -Message "Environment variable PSDPA_AZ_APP is not set" -EnableException $true
+    }
+
     try {
-        $azCredential = New-Object -TypeName 'System.Management.Automation.PSCredential' -ArgumentList $ENV:PSDPA_AZ_APP, $ENV:PSDPA_AZ
+        $azCredential = New-Object -TypeName 'System.Management.Automation.PSCredential' -ArgumentList @($ENV:PSDPA_AZ_APP, $ENV:PSDPA_AZ)
         $azAccount = Connect-AzAccount -Tenant $ENV:PSDPA_AZ_TENANT -Credential $azCredential -ServicePrincipal
 
         $dpaVm = Get-AzVM -ResourceGroupName 'PSDPA' -Name 'dpa' -Status
