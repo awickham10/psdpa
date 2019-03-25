@@ -43,8 +43,9 @@ Task Test -Depends Init  {
     }
 
     try {
-        $azCredential = New-Object -TypeName 'System.Management.Automation.PSCredential' -ArgumentList @($ENV:PSDPA_AZ_APP, $ENV:PSDPA_AZ)
-        $azAccount = Connect-AzAccount -Tenant $ENV:PSDPA_AZ_TENANT -Credential $azCredential -ServicePrincipal
+        $azPassword = ConvertTo-SecureString -String $ENV:PSDPA_AZ -AsPlainText -Force
+        $azCredential = New-Object -TypeName 'System.Management.Automation.PSCredential' -ArgumentList @($ENV:PSDPA_AZ_APP, $azPassword)
+        $null = Connect-AzAccount -Tenant $ENV:PSDPA_AZ_TENANT -Credential $azCredential -ServicePrincipal
 
         $dpaVm = Get-AzVM -ResourceGroupName 'PSDPA' -Name 'dpa' -Status
         $dpaVmStatus = $dpaVm.Statuses | Where-Object { $_.Code -like 'PowerState/*' }
