@@ -6,13 +6,13 @@ if (Test-Path -Path $localConstants) {
     return
 }
 
-if (-not $ENV:PSDPA_URI) {
-    Stop-PSFFunction -Message "Environment variable PSDPA_URI is not set" -EnableException $true
+if (-not $ENV:PSDPA_BASEURI) {
+    Stop-PSFFunction -Message "Environment variable PSDPA_BASEURI is not set" -EnableException $true
 }
 
 if (-not $ENV:PSDPA_TOKEN) {
     Stop-PSFFunction -Message "Environment variable PSDPA_TOKEN is not set" -EnableException $true
 }
 
-Set-PSFConfig -Module 'PSDPA' -Name 'baseuri' -Value $ENV:PSDPA_URI
+Set-PSFConfig -Module 'PSDPA' -Name 'baseuri' -Value $ENV:PSDPA_BASEURI
 Set-PSFConfig -Module 'PSDPA' -Name 'refreshtoken' -Value $ENV:PSDPA_TOKEN
