@@ -40,7 +40,7 @@ Get-DpaMonitor
 -   Start-DpaMonitor - Complete
 -   Stop-DpaMonitor - Complete
 -   Set-DpaMonitorPassword - Not Implemented
--   Add-DpaMonitor - Not Implemented
+-   New-DpaMonitor - Test Coverage Needed
 
 ### Licensing
 
@@ -51,5 +51,5 @@ Get-DpaMonitor
 ### Annotations
 
 -   Get-DpaAnnotation - Complete
--   Add-DpaAnnotation - Test Coverage Needed
+-   Add-DpaAnnotation - Complete
 -   Remove-DpaAnnotation - Complete
