@@ -1,4 +1,4 @@
-function Add-DpaMonitor {
+function New-DpaMonitor {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory)]
@@ -10,6 +10,9 @@ function Add-DpaMonitor {
         [Parameter(Mandatory)]
         [ValidateSet('AzureSQLDB', 'Db2', 'MySQL', 'Oracle', 'SQLServer', 'Sybase')]
         $DatabaseType,
+
+        [Parameter()]
+        $Database,
 
         [Parameter()]
         $DisplayName,
@@ -28,6 +31,9 @@ function Add-DpaMonitor {
 
         [Parameter(Mandatory)]
         [PSCredential] $Credential,
+
+        [Parameter()]
+        [switch] $CreateMonitoringUser,
 
         [Parameter()]
         [PSCredential] $MonitoringCredential,
@@ -93,6 +99,16 @@ function Add-DpaMonitor {
     $request['sysAdminUser'] = $Credential.UserName
     $request['sysAdminPassword'] = $Credential.GetNetworkCredential().Password
 
+    if ($CreateMonitoringUser) {
+        $request['monitoringUserIsNew'] = $true
+    } else {
+        $request['monitoringUserIsNew'] = $false
+    }
+
+    if ($PSBoundParameters.ContainsKey('Database')) {
+        $request['database'] = $Database
+    }
+
     if ($DatabaseType -ne 'Db2') {
         if ($PSBoundParameters.ContainsKey('MonitoringCredential') -and $DatabaseType -ne 'Db2') {
             $request['monitoringUser'] = $MonitoringCredential.UserName
@@ -106,7 +122,12 @@ function Add-DpaMonitor {
     try {
         $response = Invoke-DpaRequest -Endpoint '/databases/register-monitor' -Request $request -Method 'POST'
     } catch {
-        Stop-PSFFunction -Message "Could not register monitor" -ErrorRecord $_
+        $responseStream = $_.Exception.Response.GetResponseStream()
+        $streamReader = New-Object System.IO.StreamReader $responseStream
+
+        $response = $streamReader.ReadToEnd() | ConvertFrom-Json
+
+        Stop-PSFFunction -Message $response.messages[0].reason -ErrorRecord $_
         return
     }
 
