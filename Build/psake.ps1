@@ -32,6 +32,32 @@ Task Init {
 
 Task Test -Depends Init  {
     $lines
+    "`n`tSTATUS: Starting DPA VM"
+
+    if (-not $ENV:PSDPA_AZ) {
+        Stop-PSFFunction -Message "Environment variable PSDPA_AZ is not set" -EnableException $true
+    }
+
+    try {
+        $azCredential = New-Object -TypeName 'System.Management.Automation.PSCredential' -ArgumentList $ENV:PSDPA_AZ_APP, $ENV:PSDPA_AZ
+        $azAccount = Connect-AzAccount -Tenant $ENV:PSDPA_AZ_TENANT -Credential $azCredential -ServicePrincipal
+
+        $dpaVm = Get-AzVM -ResourceGroupName 'PSDPA' -Name 'dpa' -Status
+        $dpaVmStatus = $dpaVm.Statuses | Where-Object { $_.Code -like 'PowerState/*' }
+
+        if ($dpaVmStatus.DisplayStatus -ne 'VM running') {
+            "Starting DPA VM"
+            $dpaVm | Start-AzVM
+        } else {
+            "DPA VM is already running"
+        }
+    } catch {
+        Stop-PSFFunction -Message "Could not start Azure DPA VM" -ErrorRecord $_ -EnableException $true
+    }
+    $lines
+    "`n"
+
+    $lines
     "`n`tSTATUS: Testing with PowerShell $PSVersion"
 
     # Testing links on github requires >= tls 1.2
@@ -66,6 +92,15 @@ Task Test -Depends Init  {
         Write-Error "Failed '$($TestResults.FailedCount)' tests, build failed"
     }
     "`n"
+
+    $lines
+    "`n`tSTATUS: Stopping DPA VM"
+
+    try {
+        $dpaVm | Stop-AzVM
+    } catch {
+        Stop-PSFFunction -Message "Could not stop Azure DPA VM" -ErrorRecord $_ -EnableException $true
+    }
 }
 
 Task Build -Depends Test {

@@ -15,4 +15,5 @@
     'Pester' = '4.6.0'
     'PSFramework' = '0.10.31.176'
     'PSCodeCovIo' = '1.0.1'
+    'Az' = '1.0.0'
 }

@@ -1,4 +1,4 @@
-# See http://www.appveyor.com/docs/appveyor-yml for many more options
+image: Visual Studio 2017
 
 #Publish to PowerShell Gallery with this key
 environment:
@@ -10,17 +10,13 @@ environment:
     secure: /Ah4/9vQOkXmMZdB8SrlHqueDF5uMC/ME3pc8jgl7qqiR1rpG+W3mjyeR+FbxOPh
   PSDPA_TOKEN:
     secure: kTA548nZiwq71GIiCau5wvSPTVNn9dVfaHC//NuCKo2fljzkpL+niUwjfOVvVIbDPf8zOxznxspn1GrEkm27Dg8XGHyd9XfD8leyiKTp0gavhNLVkrVzG1/Zqj6eyFO7IKVGYB4hs7nJJasuAFxVtBjcR9UZdFEbw8d/Z06YqQo=
-
-os: WMF 5
+  PSDPA_AZ:
+    secure: 3vZUMa+iGf9aqcTolqBjG+tkPnbe3HIzVMBVJkW4dVTqi8t36MmPeXuMcKefJsXe
+  PSDPA_AZ_TENANT: 1e220ef3-d984-4f20-9bc7-a54afa8ec2af
+  PSDPA_AZ_APP: 66fb92de-ce0b-48cd-8839-d70991013dd8
 
 cache:
-  - C:\Users\appveyor\Documents\WindowsPowerShell\Modules\PSScriptAnalyzer -> Build\build.requirements.psd1
-  - C:\Users\appveyor\Documents\WindowsPowerShell\Modules\Pester -> Build\build.requirements.psd1
-  - C:\Users\appveyor\Documents\WindowsPowerShell\Modules\PSCodeCovIo -> Build\build.requirements.psd1
-  - C:\Users\appveyor\Documents\WindowsPowerShell\Modules\PSFramework -> Build\build.requirements.psd1
-  - C:\Users\appveyor\Documents\WindowsPowerShell\Modules\BuildHelpers -> Build\build.requirements.psd1
-  - C:\Users\appveyor\Documents\WindowsPowerShell\Modules\PSDeploy -> Build\build.requirements.psd1
-  - C:\Users\appveyor\Documents\WindowsPowerShell\Modules\psake -> Build\build.requirements.psd1
+  - C:\Users\appveyor\Documents\WindowsPowerShell\Modules -> Build\build.requirements.psd1
 
 # Skip on updates to the readme.
 # We can force this by adding [skip ci] or [ci skip] anywhere in commit message
