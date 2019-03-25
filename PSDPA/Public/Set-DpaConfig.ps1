@@ -1,3 +1,26 @@
+<#
+
+.SYNOPSIS
+Sets configuration options for PSDPA.
+
+.PARAMETER BaseUri
+The base URI for the DPA API.
+
+.PARAMETER RefreshToken
+The refresh token for the DPA API.
+
+.EXAMPLE
+Set-DpaConfig -BaseUri 'http://yourserver:8123/iwc/api' -RefreshToken 'yourrefreshtoken'
+
+Sets the Base URI and Refresh Token for the DPA API.
+
+.NOTES
+Author: Andrew Wickham ( @awickham )
+
+Copyright: (C) Andrew Wickham, andrew@awickham.com
+License: MIT https://opensource.org/licenses/MIT
+
+#>
 function Set-DpaConfig {
     [CmdletBinding(SupportsShouldProcess)]
     param (
