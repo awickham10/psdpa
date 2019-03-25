@@ -70,6 +70,10 @@ class SqlServerMonitor : Monitor {
     }
 }
 
+class AzureSQLDatabaseMonitor : Monitor {
+    AzureSQLDatabaseMonitor ([PSCustomObject] $Json) : base ($Json) {}
+}
+
 class MonitorFactory {
     static [Monitor[]] $Monitors
 
