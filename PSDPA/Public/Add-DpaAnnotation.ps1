@@ -99,6 +99,7 @@ function Add-DpaAnnotation {
 
     process {
         foreach ($monitorObject in $Monitor) {
+            Write-PSFMessage -Level Verbose -Message "Adding annotation to Database ID $($monitorObject.DatabaseId)"
             $endpoint = "/databases/$($monitorObject.DatabaseId)/annotations"
 
             $request = @{
@@ -109,7 +110,12 @@ function Add-DpaAnnotation {
             }
 
             $response = Invoke-DpaRequest -Endpoint $endpoint -Method 'Post' -Request $request
-            New-Object -TypeName 'Annotation' -ArgumentList $response.data
+
+            try {
+                New-Object -TypeName 'Annotation' -ArgumentList $monitorObject, $response.data
+            } catch {
+                Stop-PSFFunction -Level Critical -Message 'Could not create annotation from API response' -ErrorRecord $_ -EnableException:$EnableException
+            }
         }
     }
 }
