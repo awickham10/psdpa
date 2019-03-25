@@ -105,7 +105,7 @@ function New-DpaMonitor {
         $request['monitoringUserIsNew'] = $false
     }
 
-    if ($PSBoundParameters.ContainsKey('Database')) {
+    if ($PSBoundParameters.ContainsKey('Database') -and $DatabaseType -in @('AzureSQLDB', 'Db2')) {
         $request['database'] = $Database
     }
 
