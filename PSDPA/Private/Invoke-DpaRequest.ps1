@@ -54,6 +54,7 @@ function Invoke-DpaRequest {
     }
     if ($PSBoundParameters.ContainsKey('Request')) {
         $params['Body'] = $Request | ConvertTo-Json
+        Write-Verbose $params['Body']
     }
 
     Invoke-RestMethod @params
