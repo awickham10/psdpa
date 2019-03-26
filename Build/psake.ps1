@@ -60,7 +60,7 @@ Task Test -Depends Init  {
             do {
                 Start-Sleep -Seconds 10
                 $cycles++
-            } until ((Test-NetConnection '13.67.213.239' -Port 8123 | Where-Object { $_.TcpTestSucceeded }) -or $cycles++ -ge $maxCycles )
+            } until ((Test-NetConnection '13.67.213.239' -Port 8123 -ErrorAction 'SilentlyContinue' -WarningAction 'SilentlyContinue' | Where-Object { $_.TcpTestSucceeded }) -or $cycles++ -ge $maxCycles )
         } else {
             "DPA VM is already running"
         }
