@@ -30,41 +30,6 @@ Task Init {
     "`n"
 }
 
-function Wait-DpaAvailable {
-    # modified from https://web.archive.org/web/20150405035615/http://poshcode.org/85
-
-    param(
-        [string] $Server,
-        [int] $Port,
-        [int] $TimeoutMilliseconds = 3000
-    )
-
-    $ErrorActionPreference = 'SilentlyContinue'
-
-    $tcpClient = New-Object System.Net.Sockets.TcpClient
-    $iar = $tcpClient.BeginConnect($Server, $Port, $null, $null)
-    $wait = $iar.AsyncWaitHandle.WaitOne($timeout, $false)
-
-    if(!$wait) {
-        $tcpClient.Close()
-
-        return $false
-    } else {
-        $error.Clear()
-        $null = $tcpClient.EndConnect($iar)
-        if(!$?) {
-            $failed = $true
-        }
-        $tcpClient.Close()
-    }
-
-    if($failed) {
-        return $false
-    } else {
-        return $true
-    }
-}
-
 Task Test -Depends Init  {
     $lines
     "`n`tSTATUS: Starting DPA VM"
@@ -90,9 +55,12 @@ Task Test -Depends Init  {
             $azStart = $dpaVm | Start-AzVM
 
             "Waiting up to 10 minutes for DPA to start"
-            if (-not (Wait-DpaAvailable -Server '13.67.213.239' -Port 8123 -TimeoutMilliseconds 600000)) {
-                Stop-PSFFunction -Message "DPA VM failed to start in a timely fashion" -EnableException $true
-            }
+            $maxCycles = 60
+            $cycles = 0
+            do {
+                Start-Sleep -Seconds 10
+                $cycles++
+            } until (Test-NetConnection '13.67.213.239' -Port 8123 | Where-Object { $_.TcpTestSucceeded } -or $cycles++ -ge $maxCycles )
         } else {
             "DPA VM is already running"
         }
