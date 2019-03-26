@@ -114,7 +114,7 @@ function Add-DpaAnnotation {
             try {
                 New-Object -TypeName 'Annotation' -ArgumentList $monitorObject, $response.data
             } catch {
-                Stop-PSFFunction -Level Critical -Message 'Could not create annotation from API response' -ErrorRecord $_ -EnableException:$EnableException
+                Stop-PSFFunction -Level Critical -Message 'Could not create annotation from API response' -ErrorRecord $_ -EnableException $EnableException
             }
         }
     }
