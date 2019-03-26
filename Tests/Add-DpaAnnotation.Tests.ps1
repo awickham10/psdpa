@@ -27,7 +27,7 @@ Describe "$CommandName Integration Tests" -Tag 'Integration' {
                 $contextStartTime = $contextStartTime.AddTicks(-($contextStartTime.Ticks % [TimeSpan]::TicksPerSecond));
 
                 # get our test monitor
-                $monitor = Get-DpaMonitor -MonitorName 'PSDPATESTDB01@PSDPATEST01'
+                $monitor = Get-DpaMonitor -MonitorName 'PSDPATESTDB01@PSDPATEST01' -EnableException
 
                 # default annotation parameters to use for tests
                 $annotationParams = @{
