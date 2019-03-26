@@ -98,6 +98,13 @@ Task Test -Depends Init  {
     }
 
     Remove-Item "$ProjectRoot\$TestFile" -Force -ErrorAction SilentlyContinue
+
+    try {
+        $dpaVm | Stop-AzVM -Confirm:$false -Force
+    } catch {
+        Stop-PSFFunction -Message "Could not stop Azure DPA VM" -ErrorRecord $_ -EnableException $true
+    }
+
     # Failed tests?
     # Need to tell psake or it will proceed to the deployment. Danger!
     if($TestResults.FailedCount -gt 0)
@@ -108,12 +115,6 @@ Task Test -Depends Init  {
 
     $lines
     "`n`tSTATUS: Stopping DPA VM"
-
-    try {
-        $dpaVm | Stop-AzVM -Confirm:$false -Force
-    } catch {
-        Stop-PSFFunction -Message "Could not stop Azure DPA VM" -ErrorRecord $_ -EnableException $true
-    }
 }
 
 Task Build -Depends Test {

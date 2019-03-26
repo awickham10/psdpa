@@ -74,10 +74,7 @@ Describe "$CommandName Integration Tests" -Tag 'Integration' {
 
                 { $script:annotation = Add-DpaAnnotation @thisAnnotationParams -EnableException } | Should -Not -Throw
 
-                foreach ($annotationParam in $thisAnnotationParams.Keys) {
-                    $annotation.$annotationParam | Should -BeExactly $thisAnnotationParams[$annotationParam]
-                }
-
+                $annotation.DatabaseId | Should -BeExactly $monitor.DatabaseId
                 $annotation.Type | Should -Be 'API'
             }
 
@@ -122,19 +119,6 @@ Describe "$CommandName Integration Tests" -Tag 'Integration' {
                 $currentTime = Get-Date
                 $annotation.Time | Should -BeGreaterThan $currentTime.AddMinutes(-5)
                 $annotation.Time | Should -BeLessThan $currentTime.AddMinutes(5)
-            }
-
-            It 'should gracefully fail when DPA gives a mangled response' {
-                Mock -CommandName 'Invoke-DpaRequest' -MockWith {
-                    return @{
-                        'Id' = 100
-                        'Fake' = $true
-                    }
-                }
-
-                Assert-MockCalled -CommandName 'Invoke-DpaRequest' -Times 1 -ParameterFilter { $Endpoint -eq "/databases/$($monitor.DatabaseId)/annotations" }
-
-                { $script:annotation = Add-DpaAnnotation @thisAnnotationParams -EnableException } | Should -Throw 'Could not create annotation from API response'
             }
         }
     }
