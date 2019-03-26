@@ -19,121 +19,123 @@ Describe "$CommandName Unit Tests" -Tag 'Unit' {
 }
 
 Describe "$CommandName Integration Tests" -Tag 'Integration' {
-    Context 'Azure SQL DB' {
-        BeforeAll {
-            # set the start time and remove ticks since DPA doesn't support them
-            $contextStartTime = Get-Date
-            $contextStartTime = $contextStartTime.AddTicks(-($contextStartTime.Ticks % [TimeSpan]::TicksPerSecond));
+    InModuleScope -ModuleName 'PSDPA' {
+        Context 'Azure SQL DB' {
+            BeforeAll {
+                # set the start time and remove ticks since DPA doesn't support them
+                $contextStartTime = Get-Date
+                $contextStartTime = $contextStartTime.AddTicks(-($contextStartTime.Ticks % [TimeSpan]::TicksPerSecond));
 
-            # get our test monitor
-            $monitor = Get-DpaMonitor -MonitorName 'PSDPATESTDB01@PSDPATEST01'
+                # get our test monitor
+                $monitor = Get-DpaMonitor -MonitorName 'PSDPATESTDB01@PSDPATEST01'
 
-            # default annotation parameters to use for tests
-            $annotationParams = @{
-                Monitor = $monitor
-                Title = 'Testing API'
-                Description = 'This is a test of Add-DpaAnnotation'
-                CreatedBy = 'Test User'
-                Time = $contextStartTime
-            }
-        }
-
-        BeforeEach {
-            $script:annotation = $null
-        }
-
-        It 'should add an annotation when using -Monitor' {
-            { $script:annotation = Add-DpaAnnotation @annotationParams -EnableException } | Should -Not -Throw
-
-            foreach ($annotationParam in $annotationParams.Keys) {
-                $annotation.$annotationParam | Should -BeExactly $annotationParams[$annotationParam]
-            }
-
-            $annotation.Type | Should -Be 'API'
-        }
-
-        It 'should add an annotation when using -DatabaseId' {
-            $thisAnnotationParams = $annotationParams.Clone()
-            $thisAnnotationParams.Remove('Monitor')
-            $thisAnnotationParams['DatabaseId'] = $monitor.DatabaseId
-
-            { $script:annotation = Add-DpaAnnotation @thisAnnotationParams -EnableException } | Should -Not -Throw
-
-            foreach ($annotationParam in $thisAnnotationParams.Keys) {
-                $annotation.$annotationParam | Should -BeExactly $thisAnnotationParams[$annotationParam]
-            }
-
-            $annotation.Type | Should -Be 'API'
-        }
-
-        It 'should add an annotation when using -MonitorName' {
-            $thisAnnotationParams = $annotationParams.Clone()
-            $thisAnnotationParams.Remove('Monitor')
-            $thisAnnotationParams['MonitorName'] = $monitor.DisplayName
-
-            { $script:annotation = Add-DpaAnnotation @thisAnnotationParams -EnableException } | Should -Not -Throw
-
-            foreach ($annotationParam in $thisAnnotationParams.Keys) {
-                $annotation.$annotationParam | Should -BeExactly $thisAnnotationParams[$annotationParam]
-            }
-
-            $annotation.Type | Should -Be 'API'
-        }
-
-        It 'should add an annotation when piping a monitor' {
-            $thisAnnotationParams = $annotationParams.Clone()
-            $thisAnnotationParams.Remove('Monitor')
-
-            { $script:annotation = $monitor | Add-DpaAnnotation @thisAnnotationParams -EnableException } | Should -Not -Throw
-
-            foreach ($annotationParam in $thisAnnotationParams.Keys) {
-                $annotation.$annotationParam | Should -BeExactly $thisAnnotationParams[$annotationParam]
-            }
-
-            $annotation.DatabaseId | Should -BeExactly $monitor.DatabaseId
-            $annotation.Type | Should -Be 'API'
-        }
-
-        It 'should default CreatedBy to the current user' {
-            $thisAnnotationParams = $annotationParams.Clone()
-            $thisAnnotationParams.Remove('CreatedBy')
-
-            { $script:annotation = Add-DpaAnnotation @thisAnnotationParams -EnableException } | Should -Not -Throw
-
-            foreach ($annotationParam in $thisAnnotationParams.Keys) {
-                $annotation.$annotationParam | Should -BeExactly $thisAnnotationParams[$annotationParam]
-            }
-
-            $annotation.CreatedBy | Should -Be $env:USERNAME
-        }
-
-        It 'should default Time to the current time' {
-            $thisAnnotationParams = $annotationParams.Clone()
-            $thisAnnotationParams.Remove('Time')
-
-            { $script:annotation = Add-DpaAnnotation @thisAnnotationParams -EnableException } | Should -Not -Throw
-
-            foreach ($annotationParam in $thisAnnotationParams.Keys) {
-                $annotation.$annotationParam | Should -BeExactly $thisAnnotationParams[$annotationParam]
-            }
-
-            # give ourselves a 10 minute swing on time just in case server times vary
-            $currentTime = Get-Date
-            $annotation.Time | Should -BeGreaterThan $currentTime.AddMinutes(-5)
-            $annotation.Time | Should -BeLessThan $currentTime.AddMinutes(5)
-        }
-
-        It 'should gracefully fail when DPA gives a mangled response' {
-            Mock -CommandName 'Invoke-DpaRequest' -MockWith {
-                return @{
-                    'Id' = 100
-                    'Fake' = $true
+                # default annotation parameters to use for tests
+                $annotationParams = @{
+                    Monitor = $monitor
+                    Title = 'Testing API'
+                    Description = 'This is a test of Add-DpaAnnotation'
+                    CreatedBy = 'Test User'
+                    Time = $contextStartTime
                 }
             }
 
-            Assert-MockCalled -CommandName 'Invoke-DpaRequest' -Times 1 -ParameterFilter { $Endpoint -eq "/databases/$($monitor.DatabaseId)/annotations" }
+            BeforeEach {
+                $script:annotation = $null
+            }
 
-            { $script:annotation = Add-DpaAnnotation @thisAnnotationParams -EnableException } | Should -Throw 'Could not create annotation from API response'
+            It 'should add an annotation when using -Monitor' {
+                { $script:annotation = Add-DpaAnnotation @annotationParams -EnableException } | Should -Not -Throw
+
+                foreach ($annotationParam in $annotationParams.Keys) {
+                    $annotation.$annotationParam | Should -BeExactly $annotationParams[$annotationParam]
+                }
+
+                $annotation.Type | Should -Be 'API'
+            }
+
+            It 'should add an annotation when using -DatabaseId' {
+                $thisAnnotationParams = $annotationParams.Clone()
+                $thisAnnotationParams.Remove('Monitor')
+                $thisAnnotationParams['DatabaseId'] = $monitor.DatabaseId
+
+                { $script:annotation = Add-DpaAnnotation @thisAnnotationParams -EnableException } | Should -Not -Throw
+
+                foreach ($annotationParam in $thisAnnotationParams.Keys) {
+                    $annotation.$annotationParam | Should -BeExactly $thisAnnotationParams[$annotationParam]
+                }
+
+                $annotation.Type | Should -Be 'API'
+            }
+
+            It 'should add an annotation when using -MonitorName' {
+                $thisAnnotationParams = $annotationParams.Clone()
+                $thisAnnotationParams.Remove('Monitor')
+                $thisAnnotationParams['MonitorName'] = $monitor.Name
+
+                { $script:annotation = Add-DpaAnnotation @thisAnnotationParams -EnableException } | Should -Not -Throw
+
+                foreach ($annotationParam in $thisAnnotationParams.Keys) {
+                    $annotation.$annotationParam | Should -BeExactly $thisAnnotationParams[$annotationParam]
+                }
+
+                $annotation.Type | Should -Be 'API'
+            }
+
+            It 'should add an annotation when piping a monitor' {
+                $thisAnnotationParams = $annotationParams.Clone()
+                $thisAnnotationParams.Remove('Monitor')
+
+                { $script:annotation = $monitor | Add-DpaAnnotation @thisAnnotationParams -EnableException } | Should -Not -Throw
+
+                foreach ($annotationParam in $thisAnnotationParams.Keys) {
+                    $annotation.$annotationParam | Should -BeExactly $thisAnnotationParams[$annotationParam]
+                }
+
+                $annotation.DatabaseId | Should -BeExactly $monitor.DatabaseId
+                $annotation.Type | Should -Be 'API'
+            }
+
+            It 'should default CreatedBy to the current user' {
+                $thisAnnotationParams = $annotationParams.Clone()
+                $thisAnnotationParams.Remove('CreatedBy')
+
+                { $script:annotation = Add-DpaAnnotation @thisAnnotationParams -EnableException } | Should -Not -Throw
+
+                foreach ($annotationParam in $thisAnnotationParams.Keys) {
+                    $annotation.$annotationParam | Should -BeExactly $thisAnnotationParams[$annotationParam]
+                }
+
+                $annotation.CreatedBy | Should -Be $env:USERNAME
+            }
+
+            It 'should default Time to the current time' {
+                $thisAnnotationParams = $annotationParams.Clone()
+                $thisAnnotationParams.Remove('Time')
+
+                { $script:annotation = Add-DpaAnnotation @thisAnnotationParams -EnableException } | Should -Not -Throw
+
+                foreach ($annotationParam in $thisAnnotationParams.Keys) {
+                    $annotation.$annotationParam | Should -BeExactly $thisAnnotationParams[$annotationParam]
+                }
+
+                # give ourselves a 10 minute swing on time just in case server times vary
+                $currentTime = Get-Date
+                $annotation.Time | Should -BeGreaterThan $currentTime.AddMinutes(-5)
+                $annotation.Time | Should -BeLessThan $currentTime.AddMinutes(5)
+            }
+
+            It 'should gracefully fail when DPA gives a mangled response' {
+                Mock -CommandName 'Invoke-DpaRequest' -MockWith {
+                    return @{
+                        'Id' = 100
+                        'Fake' = $true
+                    }
+                }
+
+                Assert-MockCalled -CommandName 'Invoke-DpaRequest' -Times 1 -ParameterFilter { $Endpoint -eq "/databases/$($monitor.DatabaseId)/annotations" }
+
+                { $script:annotation = Add-DpaAnnotation @thisAnnotationParams -EnableException } | Should -Throw 'Could not create annotation from API response'
+            }
         }
     }
 }
