@@ -102,7 +102,7 @@ Task Test -Depends Init  {
     "`n`tSTATUS: Stopping DPA VM"
 
     try {
-        $dpaVm | Stop-AzVM
+        $dpaVm | Stop-AzVM -Confirm:$false -Force
     } catch {
         Stop-PSFFunction -Message "Could not stop Azure DPA VM" -ErrorRecord $_ -EnableException $true
     }
