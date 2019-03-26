@@ -52,8 +52,7 @@ function Get-DpaMonitor {
     if ($PSBoundParameters.ContainsKey('DatabaseId') -and $DatabaseId.Count -eq 1) {
         Write-PSFMessage -Level Verbose -Message 'Getting a single monitor'
         $endpoint = "/databases/$DatabaseId/monitor-information"
-    }
-    else {
+    } else {
         Write-PSFMessage -Level Verbose -Message 'Getting all monitors'
         $endpoint = '/databases/monitor-information'
     }
@@ -61,8 +60,7 @@ function Get-DpaMonitor {
     try {
         $response = Invoke-DpaRequest -Endpoint $endpoint -Method 'Get'
         $monitors = $response.data
-    }
-    catch {
+    } catch {
         if ($_.Exception.Response.StatusCode.value__ -eq 422) {
             return $null
         }
@@ -72,8 +70,7 @@ function Get-DpaMonitor {
 
     if ($PSBoundParameters.ContainsKey('DatabaseId') -and $DatabaseId -is [array]) {
         $monitors = $monitors | Where-Object { $_.dbid -in $DatabaseId }
-    }
-    elseif ($PSCmdlet.ParameterSetName -eq 'ByName') {
+    } elseif ($PSCmdlet.ParameterSetName -eq 'ByName') {
         $monitors = $monitors | Where-Object { $_.name -in $MonitorName }
     }
 

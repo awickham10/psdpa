@@ -73,13 +73,13 @@ Describe "$CommandName Integration Tests" -Tag 'Integration' {
             }
 
             It 'should return an empty resultset when a monitor is not found' {
-                Get-DpaMonitor -DatabaseId 0 | Should -HaveCount 0
+                Get-DpaMonitor -DatabaseId 0 -WarningAction 'SilentlyContinue' | Should -HaveCount 0
 
                 Assert-MockCalled -CommandName 'Invoke-RestMethod' -Times 1
             }
 
             It 'should not throw an exception when monitor is not found and -EnableException is not used' {
-                { Get-DpaMonitor -DatabaseId 0 } | Should -Not -Throw 'Not Found'
+                { Get-DpaMonitor -DatabaseId 0 -WarningAction 'SilentlyContinue' } | Should -Not -Throw 'Not Found'
 
                 Assert-MockCalled -CommandName 'Invoke-RestMethod' -Times 1
             }

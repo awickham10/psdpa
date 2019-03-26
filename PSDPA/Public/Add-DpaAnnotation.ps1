@@ -92,25 +92,30 @@ function Add-DpaAnnotation {
     begin {
         if ($PSCmdlet.ParameterSetName -eq 'ByName') {
             $Monitor = Get-DpaMonitor -MonitorName $MonitorName
-        }
-        elseif ($PSCmdlet.ParameterSetName -eq 'ByDatabaseId') {
+        } elseif ($PSCmdlet.ParameterSetName -eq 'ByDatabaseId') {
             $Monitor = Get-DpaMonitor -DatabaseId $DatabaseId
         }
     }
 
     process {
         foreach ($monitorObject in $Monitor) {
+            Write-PSFMessage -Level Verbose -Message "Adding annotation to Database ID $($monitorObject.DatabaseId)"
             $endpoint = "/databases/$($monitorObject.DatabaseId)/annotations"
 
             $request = @{
-                'title' = $Title
+                'title'       = $Title
                 'description' = $Description
-                'createdBy' = $CreatedBy
-                'time' = $Time.ToString("yyyy-MM-ddTHH\:mm\:sszzz")
+                'createdBy'   = $CreatedBy
+                'time'        = $Time.ToString("yyyy-MM-ddTHH\:mm\:sszzz")
             }
 
             $response = Invoke-DpaRequest -Endpoint $endpoint -Method 'Post' -Request $request
-            New-Object -TypeName 'Annotation' -ArgumentList $response.data
+
+            try {
+                New-Object -TypeName 'Annotation' -ArgumentList $monitorObject, $response.data
+            } catch {
+                Stop-PSFFunction -Level Critical -Message 'Could not create annotation from API response' -ErrorRecord $_ -EnableException $EnableException
+            }
         }
     }
 }

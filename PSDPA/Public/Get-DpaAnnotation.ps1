@@ -80,8 +80,7 @@ function Get-DpaAnnotation {
     begin {
         if ($PSCmdlet.ParameterSetName -eq 'ByName') {
             $Monitor = Get-DpaMonitor -MonitorName $MonitorName
-        }
-        elseif ($PSCmdlet.ParameterSetName -eq 'ByDatabaseId') {
+        } elseif ($PSCmdlet.ParameterSetName -eq 'ByDatabaseId') {
             $Monitor = Get-DpaMonitor -DatabaseId $DatabaseId
         }
     }
@@ -92,7 +91,7 @@ function Get-DpaAnnotation {
 
             $parameters = @{
                 'startTime' = $StartTime.ToString("yyyy-MM-ddTHH\:mm\:ss.fffzzz")
-                'endTime' = $EndTime.ToString("yyyy-MM-ddTHH\:mm\:ss.fffzzz")
+                'endTime'   = $EndTime.ToString("yyyy-MM-ddTHH\:mm\:ss.fffzzz")
             }
 
             $response = Invoke-DpaRequest -Endpoint $endpoint -Method 'Get' -Parameters $parameters

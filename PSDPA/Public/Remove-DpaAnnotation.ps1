@@ -27,7 +27,7 @@ License: MIT https://opensource.org/licenses/MIT
 #>
 
 function Remove-DpaAnnotation {
-    [CmdletBinding(DefaultParameterSetName = 'ById')]
+    [CmdletBinding(DefaultParameterSetName = 'ById', SupportsShouldProcess)]
     param (
         [Parameter(ParameterSetName = 'ByObject', ValueFromPipeline)]
         [Annotation[]] $Annotation,
@@ -37,12 +37,13 @@ function Remove-DpaAnnotation {
     )
 
     foreach ($annotationObject in $Annotation) {
-        $endpoint = "databases/$($annotationObject.DatabaseId)/annotations/$($annotationObject.AnnotationId)"
-        try {
-            $response = Invoke-DpaRequest -Endpoint $endpoint -Method 'Delete'
-        }
-        catch {
-            Stop-PSFFunction -Message "Could not remove annotation" -EnableException:$EnableException -ErrorRecord $_
+        if ($PSCmdlet.ShouldProcess($annotationObject.Title, 'Remove Annotation')) {
+            $endpoint = "databases/$($annotationObject.DatabaseId)/annotations/$($annotationObject.AnnotationId)"
+            try {
+                $response = Invoke-DpaRequest -Endpoint $endpoint -Method 'Delete'
+            } catch {
+                Stop-PSFFunction -Message "Could not remove annotation" -EnableException:$EnableException -ErrorRecord $_
+            }
         }
     }
 }

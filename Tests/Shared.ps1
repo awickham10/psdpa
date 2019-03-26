@@ -6,7 +6,8 @@ if(-not $ENV:BHProjectPath)
 $PSVersion = $PSVersionTable.PSVersion.Major
 $ModuleName = $ENV:BHProjectName
 
-. (Join-Path -Path $PSScriptRoot -ChildPath 'Constants.ps1')
+$ConstantsFile = Join-Path -Path $PSScriptRoot -ChildPath 'Constants.ps1'
+. $ConstantsFile
 
 Remove-Module $ENV:BHProjectName -ErrorAction SilentlyContinue
 Import-Module (Join-Path $ENV:BHProjectPath $ModuleName) -Force

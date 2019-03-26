@@ -23,8 +23,8 @@ class AccessToken {
 
     [bool] IsValid() {
         return `
-            (Get-Date) -lt $this.Expiration -and
-            $null -ne $this.AccessToken -and
-            $null -ne $this.TokenType
+        (Get-Date) -lt $this.Expiration -and
+        $null -ne $this.AccessToken -and
+        $null -ne $this.TokenType
     }
 }

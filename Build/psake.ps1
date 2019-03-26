@@ -32,6 +32,47 @@ Task Init {
 
 Task Test -Depends Init  {
     $lines
+    "`n`tSTATUS: Starting DPA VM"
+
+    if (-not $ENV:PSDPA_AZ) {
+        Stop-PSFFunction -Message "Environment variable PSDPA_AZ is not set" -EnableException $true
+    }
+
+    if (-not $ENV:PSDPA_AZ_APP) {
+        Stop-PSFFunction -Message "Environment variable PSDPA_AZ_APP is not set" -EnableException $true
+    }
+
+    try {
+        $azPassword = ConvertTo-SecureString -String $ENV:PSDPA_AZ -AsPlainText -Force
+        $azCredential = New-Object -TypeName 'System.Management.Automation.PSCredential' -ArgumentList @($ENV:PSDPA_AZ_APP, $azPassword)
+        $null = Connect-AzAccount -Tenant $ENV:PSDPA_AZ_TENANT -Credential $azCredential -ServicePrincipal
+
+        $dpaVm = Get-AzVM -ResourceGroupName 'PSDPA' -Name 'dpa' -Status
+        $dpaVmStatus = $dpaVm.Statuses | Where-Object { $_.Code -like 'PowerState/*' }
+
+        if ($dpaVmStatus.DisplayStatus -ne 'VM running') {
+            "Starting DPA VM"
+            $azStart = $dpaVm | Start-AzVM
+
+            "Waiting up to 10 minutes for DPA to start"
+            $maxCycles = 60
+            $cycles = 0
+            do {
+                Start-Sleep -Seconds 10
+                $cycles++
+            } until ((Test-NetConnection '13.67.213.239' -Port 8123 -ErrorAction 'SilentlyContinue' -WarningAction 'SilentlyContinue' | Where-Object { $_.TcpTestSucceeded }) -or $cycles++ -ge $maxCycles )
+
+            Start-Sleep -Seconds 180
+        } else {
+            "DPA VM is already running"
+        }
+    } catch {
+        Stop-PSFFunction -Message "Could not start Azure DPA VM" -ErrorRecord $_ -EnableException $true
+    }
+    $lines
+    "`n"
+
+    $lines
     "`n`tSTATUS: Testing with PowerShell $PSVersion"
 
     # Testing links on github requires >= tls 1.2
@@ -59,6 +100,13 @@ Task Test -Depends Init  {
     }
 
     Remove-Item "$ProjectRoot\$TestFile" -Force -ErrorAction SilentlyContinue
+
+    try {
+        $dpaVm | Stop-AzVM -Confirm:$false -Force
+    } catch {
+        Stop-PSFFunction -Message "Could not stop Azure DPA VM" -ErrorRecord $_ -EnableException $true
+    }
+
     # Failed tests?
     # Need to tell psake or it will proceed to the deployment. Danger!
     if($TestResults.FailedCount -gt 0)
@@ -66,6 +114,9 @@ Task Test -Depends Init  {
         Write-Error "Failed '$($TestResults.FailedCount)' tests, build failed"
     }
     "`n"
+
+    $lines
+    "`n`tSTATUS: Stopping DPA VM"
 }
 
 Task Build -Depends Test {
@@ -75,16 +126,13 @@ Task Build -Depends Test {
     Set-ModuleFunctions
 
     # Bump the module version if we didn't already
-    Try
-    {
-        $GalleryVersion = Get-NextPSGalleryVersion -Name $env:BHProjectName -ErrorAction Stop
-        $GithubVersion = Get-MetaData -Path $env:BHPSModuleManifest -PropertyName ModuleVersion -ErrorAction Stop
+    try {
+        [version]$GalleryVersion = Get-NextNugetPackageVersion -Name $env:BHProjectName -ErrorAction Stop
+        [version]$GithubVersion = Get-MetaData -Path $env:BHPSModuleManifest -PropertyName ModuleVersion -ErrorAction Stop
         if($GalleryVersion -ge $GithubVersion) {
             Update-Metadata -Path $env:BHPSModuleManifest -PropertyName ModuleVersion -Value $GalleryVersion -ErrorAction stop
         }
-    }
-    Catch
-    {
+    } catch {
         "Failed to update version for '$env:BHProjectName': $_.`nContinuing with existing version"
     }
 }

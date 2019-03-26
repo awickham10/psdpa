@@ -37,7 +37,7 @@ License: MIT https://opensource.org/licenses/MIT
 #>
 
 function Start-DpaMonitor {
-    [CmdletBinding(DefaultParameterSetName = 'ByName')]
+    [CmdletBinding(DefaultParameterSetName = 'ByName', SupportsShouldProcess)]
     param (
         [Parameter(ParameterSetName = 'ByDatabaseId', Mandatory)]
         [int[]] $DatabaseId,
@@ -56,8 +56,7 @@ function Start-DpaMonitor {
     begin {
         if ($PSCmdlet.ParameterSetName -eq 'ByName') {
             $Monitor = Get-DpaMonitor -MonitorName $MonitorName
-        }
-        elseif ($PSCmdlet.ParameterSetName -eq 'ByDatabaseId') {
+        } elseif ($PSCmdlet.ParameterSetName -eq 'ByDatabaseId') {
             $Monitor = Get-DpaMonitor -DatabaseId $DatabaseId
         }
 
@@ -68,11 +67,12 @@ function Start-DpaMonitor {
 
     process {
         foreach ($monitorObject in $Monitor) {
-            try {
-                $response = Invoke-DpaRequest -Endpoint "/databases/$($monitorObject.Dbid)/monitor-status" -Method 'PUT' -Request $request
-            }
-            catch {
-                Stop-PSFFunction -Message "Could not start the monitor" -EnableException:$EnableException -ErrorRecord $_ -Target $monitorObject.Name
+            if ($PSCmdlet.ShouldProcess($monitor.Name, 'Start Monitor')) {
+                try {
+                    $response = Invoke-DpaRequest -Endpoint "/databases/$($monitorObject.Dbid)/monitor-status" -Method 'PUT' -Request $request
+                } catch {
+                    Stop-PSFFunction -Message "Could not start the monitor" -EnableException:$EnableException -ErrorRecord $_ -Target $monitorObject.Name
+                }
             }
         }
     }
