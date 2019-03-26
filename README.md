@@ -25,6 +25,9 @@ Set-DpaConfig -BaseUri 'https://yourdpaserver:8124/iwc/api' -RefreshToken 'yourp
 
 # Get listing of monitors
 Get-DpaMonitor
+
+# Add an annotation to all monitors
+Get-DpaMonitor | Add-DpaAnnotation -Title 'Patching' -Description 'Quarterly patching'
 ```
 
 ## Functions
