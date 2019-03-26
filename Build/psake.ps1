@@ -41,7 +41,7 @@ function Wait-DpaAvailable {
 
     $ErrorActionPreference = 'SilentlyContinue'
 
-    $tcpClient = Mew-Object System.Net.Sockets.TcpClient
+    $tcpClient = New-Object System.Net.Sockets.TcpClient
     $iar = $tcpClient.BeginConnect($Server, $Port, $null, $null)
     $wait = $iar.AsyncWaitHandle.WaitOne($timeout, $false)
 
