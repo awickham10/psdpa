@@ -47,5 +47,11 @@ Describe "$CommandName Integration Tests" -Tag 'Integration' {
         It 'errors with an invalid -AlertGroupId' {
             { Get-DpaAlertGroup -AlertGroupid 99 -EnableException } | Should -Throw 'The remote server returned an error: (422).'
         }
+
+        It 'includes alerts in the response' {
+            $alertGroupId = 1
+            $alertGroup = Get-DpaAlertGroup -AlertGroupId $alertGroupId
+            $alertGroup.Alerts | Should -HaveCount 2
+        }
     }
 }
