@@ -5,6 +5,7 @@ class Alert {
     [string] $Category
     [string[]] $SupportedDbTypes
     [bool] $Enabled
+    [Monitor[]] $Monitors
     
     Alert ([PSCustomObject] $Json) {
         $this.AlertId = $Json.id
@@ -13,5 +14,9 @@ class Alert {
         $this.Category = $Json.category
         $this.SupportedDbTypes = $Json.supportedDatabaseTypes
         $this.Enabled = $Json.enabled
+
+        if ($Json.databaseIds.Count -gt 0) {
+            $this.Monitors = Get-DpaMonitor -DatabaseId $Json.databaseIds
+        }
     }
 }

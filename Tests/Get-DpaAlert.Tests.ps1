@@ -54,5 +54,10 @@ Describe "$CommandName Integration Tests" -Tag 'Integration' {
         It 'errors with an invalid -AlertId' {
             { Get-DpaAlert -AlertId 99 -EnableException } | Should -Throw 'The remote server returned an error: (404) Not Found.'
         }
+
+        It 'includes monitors in the response' {
+            $alert = Get-DpaAlert -AlertId 1
+            $alert.Montiors.Count | Should -HaveCount 1
+        }
     }
 }
