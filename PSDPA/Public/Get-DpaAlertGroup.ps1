@@ -51,9 +51,17 @@ function Get-DpaAlertGroup {
             $endpoint = '/alert-groups'
 
             $response = Invoke-DpaRequest -Endpoint $endpoint -Method 'Get'
-            $filteredResponses = $response.data | Where-Object { $_.name -in $AlertGroupName }
-            foreach ($alertGroup in $filteredResponses) {
-                $alertGroups = New-Object -TypeName 'AlertGroup' -ArgumentList $alertGroup
+
+            # filter by name if applicable 
+            if (Test-PSFParameterBinding -ParameterName 'AlertGroupName') {
+                $response = $response.data | Where-Object { $_.name -in $AlertGroupName }
+            } else {
+                $response = $response.data
+            }
+
+            foreach ($alertGroup in $response) {
+                Write-PSFMessage -Level 'Verbose' -Message "Creating alert group for $($alertGroup.id)"
+                $alertGroups += New-Object -TypeName 'AlertGroup' -ArgumentList $alertGroup
             }
         }
 

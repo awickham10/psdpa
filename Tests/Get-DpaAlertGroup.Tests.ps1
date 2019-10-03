@@ -18,6 +18,11 @@ Describe "$CommandName Unit Tests" -Tag 'Unit' {
 
 Describe "$CommandName Integration Tests" -Tag 'Integration' {
     InModuleScope 'PSDPA' {
+        It 'gets all alert groups' {
+            $alertGroups = Get-DpaAlertGroup
+            $alertGroups | Should -HaveCount 2
+        }
+
         It 'gets alert groups by -AlertGroupId' {
             $alertGroupId = 1
             $alertGroup = Get-DpaAlertGroup -AlertGroupId $alertGroupId
