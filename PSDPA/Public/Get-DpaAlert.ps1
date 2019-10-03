@@ -51,16 +51,20 @@ function Get-DpaAlert {
             $endpoint = '/alerts'
 
             $response = Invoke-DpaRequest -Endpoint $endpoint -Method 'Get'
-            $filteredResponses = $response.data | Where-Object { $_.name -in $AlertName }
-            foreach ($alert in $filteredResponses) {
-                $alerts += New-Object -TypeName 'Alert' -ArgumentList $alert
+
+            # filter by name if applicable
+            if (Test-PSFParameterBinding -ParameterName 'AlertName') {
+                $response = $response.data | Where-Object { $_.name -in $AlertName }
+            } else {
+                $response = $response.data
             }
 
-            if ($EnableException -and $alerts.Count -eq 0) {
-                Stop-PSFFunction -Message 'No alerts found.' -EnableException $EnableException
+            foreach ($alert in $response) {
+                Write-PSFMessage -Level 'Verbose' -Message "Creating alert for $($alert.id)"
+                $alerts += New-Object -TypeName 'Alert' -ArgumentList $alert
             }
         }
 
-        return $alerts
+        $alerts
     }
 }

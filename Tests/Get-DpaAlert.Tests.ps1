@@ -18,6 +18,11 @@ Describe "$CommandName Unit Tests" -Tag 'Unit' {
 
 Describe "$CommandName Integration Tests" -Tag 'Integration' {
     InModuleScope 'PSDPA' {
+        It 'gets all alerts' {
+            $alerts = Get-DpaAlert
+            $alerts | Should -HaveCount 2
+        }
+
         It 'gets alerts by -AlertId' {
             $alertId = 1
             $alert = Get-DpaAlert -AlertId $alertId
@@ -48,10 +53,6 @@ Describe "$CommandName Integration Tests" -Tag 'Integration' {
 
         It 'errors with an invalid -AlertId' {
             { Get-DpaAlert -AlertId 99 -EnableException } | Should -Throw 'The remote server returned an error: (404) Not Found.'
-        }
-
-        It 'errors with an invalid -AlertName' {
-            { Get-DpaAlert -AlertName 'No Such Alert' -EnableException } | Should -Throw 'No alerts found.'
         }
     }
 }
