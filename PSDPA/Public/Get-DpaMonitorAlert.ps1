@@ -11,6 +11,9 @@ function Get-DpaMonitorAlert {
         [Monitor[]] $Monitor,
 
         [Parameter()]
+        [switch] $IncludeAlertGroupAlerts,
+
+        [Parameter()]
         [switch] $EnableException
     )
 
@@ -28,6 +31,11 @@ function Get-DpaMonitorAlert {
         # get all the alerts
         $endpoint = "/databases/$($Monitor.DatabaseId)/alerts"
 
+        if ($IncludeAlertGroupAlerts) {
+            $alertGroups = Get-DpaMonitorAlertGroup -Monitor $Monitor
+            $alerts += $alertGroups.Alerts
+        }
+
         try {
             $response = Invoke-DpaRequest -Endpoint $endpoint -Method 'GET'
         } catch {
@@ -35,7 +43,10 @@ function Get-DpaMonitorAlert {
         }
         foreach ($alert in $response.data) {
             Write-PSFMessage -Level 'Verbose' -Message "Creating alert for $($alert.id)"
-            $alerts += New-Object -TypeName 'Alert' -ArgumentList $alert
+
+            if ($alerts.AlertId -notcontains $alert.id) {
+                $alerts += New-Object -TypeName 'Alert' -ArgumentList $alert
+            }
         }
 
         $alerts
