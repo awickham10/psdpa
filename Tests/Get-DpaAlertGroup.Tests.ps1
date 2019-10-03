@@ -52,6 +52,12 @@ Describe "$CommandName Integration Tests" -Tag 'Integration' {
             $alertGroupId = 1
             $alertGroup = Get-DpaAlertGroup -AlertGroupId $alertGroupId
             $alertGroup.Alerts | Should -HaveCount 2
-        }
+       }
+
+       It 'includes monitors in the response' {
+           $alertGroupId = 1
+           $alertGroup = Get-DpaAlertGroup -AlertGroupId $alertGroupId
+           $alertGroup.Monitors.Count | Should -HaveCount 1
+       }
     }
 }

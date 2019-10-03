@@ -3,13 +3,19 @@ class AlertGroup {
     [string] $Name
     [string] $Description
     [Alert[]] $Alerts
-
-    #[Monitor[]] $Monitors
+    [Monitor[]] $Monitors
     
     AlertGroup ([PSCustomObject] $Json) {
         $this.AlertGroupId = $Json.id
         $this.Name = $Json.name
         $this.Description = $Json.description
-        $this.Alerts = Get-DpaAlert -AlertId $Json.alertIds
+
+        if ($Json.alertIds.Count -gt 0) {
+            $this.Alerts = Get-DpaAlert -AlertId $Json.alertIds
+        }
+        
+        if ($Json.databaseIds.Count -gt 0) {
+            $this.Monitors = Get-DpaMonitor -DatabaseId $Json.databaseIds
+        }
     }
 }
