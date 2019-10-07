@@ -6,6 +6,9 @@ Retrieve alert e-mail templates.
 .DESCRIPTION
 Gets the e-mail templates for alerts.
 
+.PARAMETER TemplateId
+ID of the template.
+
 .PARAMETER TemplateName
 Name of the template.
 
@@ -33,28 +36,48 @@ License: MIT https://opensource.org/licenses/MIT
 function Get-DpaAlertEmailTemplate {
     [CmdletBinding(DefaultParameterSetName = 'All')]
     param (
+        [Parameter(ParameterSetName = 'ById', Mandatory)]
+        [int[]] $TemplateId,
+
         [Parameter(ParameterSetName = 'ByName', Mandatory)]
+        [ValidateNotNullOrEmpty()]
         [string[]] $TemplateName,
 
         [Parameter()]
         [switch] $EnableException
     )
 
-    $endpoint = '/alerts/templates?require=alert-assignments'
+    process {
+        $templates = @()
 
-    try {
-        $response = Invoke-DpaRequest -Endpoint $endpoint -Method 'GET'
-        $templates = $response.data
-    } catch {
-        Stop-PSFFunction -Message 'Could not retrieve alert e-mail templates' -ErrorRecord $_ -EnableException $EnableException
-    }
+        if ($PSCmdlet.ParameterSetName -eq 'ById') {
+            foreach ($retrieveTemplateId in $TemplateId) {
+                $endpoint = "/alerts/templates/$($retrieveTemplateId)?require=alert-assignments"
 
-    if (Test-PSFParameterBinding -ParameterName 'TemplateName') {
-        $templates = $templates | Where-Object { $_.name -in $TemplateName }
-    }
-    
-    foreach ($emailTemplate in $templates) {
-        $emailTemplate | ogv
-        New-Object -TypeName 'AlertEmailTemplate' -ArgumentList $emailTemplate
+                try {
+                    $response = Invoke-DpaRequest -Endpoint $endpoint -Method 'GET'
+                    $templates += New-Object -TypeName 'AlertEmailTemplate' -ArgumentList $response.data
+                } catch {
+                    Stop-PSFFunction -Message 'Invalid TemplateId' -ErrorRecord $_ -EnableException $EnableException
+                }
+            }
+        } else {
+            $endpoint = '/alerts/templates?require=alert-assignments'
+
+            $response = Invoke-DpaRequest -Endpoint $endpoint -Method 'GET'
+
+            # filter by name if applicable
+            if (Test-PSFParameterBinding -ParameterName 'TemplateName') {
+                $response = $response.data | Where-Object { $_.name -in $TemplateName }
+            } else {
+                $response = $response.data
+            }
+
+            foreach ($emailTemplate in $response) {
+                New-Object -TypeName 'AlertEmailTemplate' -ArgumentList $emailTemplate
+            }
+        }
+
+        $templates
     }
 }
