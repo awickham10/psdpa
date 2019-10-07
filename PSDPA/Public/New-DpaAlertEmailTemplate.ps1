@@ -21,6 +21,10 @@ The body of the e-mail. This is the "Body" field in DPA.
 .PARAMETER Default
 Makes the alert e-mail template the default for all unassigned alerts.
 
+.PARAMETER Force
+When Force is used, if an alert e-mail template with the name provided already
+exists it will be overwritten with the new alert e-mail template.
+
 .PARAMETER EnableException
 Replaces user friendly yellow warnings with bloody red exceptions of doom! Use
 this if you want the function to throw terminating errors you want to catch.
@@ -63,10 +67,17 @@ function New-DpaAlertEmailTemplate {
         [switch] $Default,
 
         [Parameter()]
+        [switch] $Force,
+
+        [Parameter()]
         [switch] $EnableException
     )
 
     $endpoint = '/alerts/templates'
+
+    if ($Force) {
+        $endpoint += '?override=true'
+    }
 
     $request = @{
         'name'            = $TemplateName
