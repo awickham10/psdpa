@@ -69,9 +69,9 @@ function Start-DpaMonitor {
         foreach ($monitorObject in $Monitor) {
             if ($PSCmdlet.ShouldProcess($monitorObject.Name, 'Start Monitor')) {
                 try {
-                    $null = Invoke-DpaRequest -Endpoint "/databases/$($monitorObject.Dbid)/monitor-status" -Method 'PUT' -Request $request
+                    $null = Invoke-DpaRequest -Endpoint "/databases/$($monitorObject.DatabaseId)/monitor-status" -Method 'PUT' -Request $request
                 } catch {
-                    Stop-PSFFunction -Message "Could not start the monitor" -EnableException:$EnableException -ErrorRecord $_ -Target $monitorObject.Name
+                    Stop-PSFFunction -Message "Could not start the monitor" -EnableException $EnableException -ErrorRecord $_ -Target $monitorObject.Name
                 }
             }
         }

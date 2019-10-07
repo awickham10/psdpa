@@ -68,9 +68,9 @@ function Stop-DpaMonitor {
         foreach ($monitorObject in $Monitor) {
             if ($PSCmdlet.ShouldProcess($monitorObject.Name, 'Stop Monitor')) {
                 try {
-                    $null = Invoke-DpaRequest -Endpoint "/databases/$($monitorObject.Dbid)/monitor-status" -Method 'PUT' -Request $request
+                    $null = Invoke-DpaRequest -Endpoint "/databases/$($monitorObject.DatabaseId)/monitor-status" -Method 'PUT' -Request $request
                 } catch {
-                    Stop-PSFFunction -Message "Could not stop the monitor" -ErrorRecord $_ -Target $monitorObject.Name
+                    Stop-PSFFunction -Message "Could not stop the monitor" -EnableException $EnableException -ErrorRecord $_ -Target $monitorObject.Name
                 }
             }
         }
