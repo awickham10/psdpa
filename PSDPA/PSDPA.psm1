@@ -4,7 +4,8 @@ $Classes = @(
     (Get-ChildItem -Path "$PSScriptRoot\Classes\Alert.ps1"),
     (Get-ChildItem -Path "$PSScriptRoot\Classes\MonitorAlert.ps1"),
     (Get-ChildItem -Path "$PSScriptRoot\Classes\AlertGroup.ps1"),
-    (Get-ChildItem -Path "$PSScriptRoot\Classes\Annotation.ps1")
+    (Get-ChildItem -Path "$PSScriptRoot\Classes\Annotation.ps1"),
+    (Get-ChildItem -Path "$PSScriptRoot\Classes\AlertEmailTemplate.ps1")
 )
 $Private = @( Get-ChildItem -Path "$PSScriptRoot\Private\*.ps1" -Recurse )
 $Public = @( Get-ChildItem -Path "$PSScriptRoot\Public\*.ps1" -Recurse )
