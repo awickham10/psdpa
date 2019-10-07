@@ -74,6 +74,7 @@ function Get-DpaAnnotation {
         [Parameter()]
         [DateTime] $EndTime = (Get-Date),
 
+        [Parameter()]
         [switch] $EnableException
     )
 

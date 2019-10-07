@@ -86,6 +86,7 @@ function Add-DpaAnnotation {
         [Parameter()]
         [string] $CreatedBy = ([Environment]::UserName),
 
+        [Parameter()]
         [switch] $EnableException
     )
 

@@ -54,6 +54,7 @@ function Get-DpaMonitorLicense {
         [Parameter(ParameterSetName = 'ByMonitor', ValueFromPipeline)]
         [Monitor[]] $Monitor,
 
+        [Parameter()]
         [switch] $EnableException
     )
 
