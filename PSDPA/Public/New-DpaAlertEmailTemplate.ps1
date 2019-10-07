@@ -18,6 +18,9 @@ The subject of the e-mail. This is the "Subject" field in DPA.
 .PARAMETER Body
 The body of the e-mail. This is the "Body" field in DPA.
 
+.PARAMETER Default
+Makes the alert e-mail template the default for all unassigned alerts.
+
 .PARAMETER EnableException
 Replaces user friendly yellow warnings with bloody red exceptions of doom! Use
 this if you want the function to throw terminating errors you want to catch.
@@ -56,7 +59,10 @@ function New-DpaAlertEmailTemplate {
         [Parameter(Mandatory)]
         [string] $Body,
 
-        [Parameter]
+        [Parameter()]
+        [switch] $Default,
+
+        [Parameter()]
         [switch] $EnableException
     )
 
@@ -77,8 +83,21 @@ function New-DpaAlertEmailTemplate {
     }
 
     try {
-        New-Object -TypeName 'AlertEmailTemplate' -ArgumentList $response.data
+        $template = New-Object -TypeName 'AlertEmailTemplate' -ArgumentList $response.data
     } catch {
-        Stop-PSFFunction -Level Critical -Message 'Could not create e-mail template from API response' -ErrorRecord $_ -EnableException $EnableException
+        Stop-PSFFunction -Message 'Could not create e-mail template from API response' -ErrorRecord $_ -EnableException $EnableException
+        return
     }
+
+    if ($Default) {
+        $endpoint = "/alerts/templates/$($template.AlertEmailTemplateId)/default"
+
+        try {
+            $null = Invoke-DpaRequest -Endpoint $endpoint -Method 'PUT'
+        } catch {
+            Stop-PSFFunction -Message 'Could not make the e-mail template the default' -ErrorRecord $_ -EnableException $EnableException
+        }
+    }
+
+    $template
 }
