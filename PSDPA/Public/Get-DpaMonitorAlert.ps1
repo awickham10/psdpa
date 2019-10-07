@@ -11,6 +11,9 @@ function Get-DpaMonitorAlert {
         [Monitor[]] $Monitor,
 
         [Parameter()]
+        [int[]] $AlertId,
+
+        [Parameter()]
         [switch] $IncludeAlertGroupAlerts,
 
         [Parameter()]
@@ -28,12 +31,26 @@ function Get-DpaMonitorAlert {
     process {
         $alerts = @()
 
-        # get all the alerts
-        $endpoint = "/databases/$($Monitor.DatabaseId)/alerts"
-
         if ($IncludeAlertGroupAlerts) {
-            $alertGroups = Get-DpaMonitorAlertGroup -Monitor $Monitor
-            $alerts += $alertGroups.Alerts
+            $groupEndpoint = "/databases/$($Monitor.DatabaseId)/alert-groups"
+            try {
+                $groupAlerts = Invoke-DpaRequest -Endpoint $groupEndpoint -Method 'GET'
+                foreach ($alertGroup in $groupAlerts.data) {
+                    foreach ($groupAlertId in $alertGroup.alertIds) {
+                        $alerts += Get-DpaMonitorAlert -Monitor $Monitor -AlertId $groupAlertId
+                    }
+                }
+            } catch {
+                Stop-PSFFunction -Message "Could not retrieve alert groups for Database ID $($Monitor.DatabaseId)" -ErrorRecord $_ -EnableException $EnableException
+            }
+        }
+
+        if (Test-PSFParameterBinding -ParameterName 'AlertId') {
+            Write-PSFMessage -Level 'Verbose' -Message 'Getting a single alert'
+            $endpoint = "/alerts/$AlertId"
+        } else {
+            Write-PSFMessage -Level 'Verbose' -Message 'Getting all associated alerts'
+            $endpoint = "/databases/$($Monitor.DatabaseId)/alerts"
         }
 
         try {
@@ -41,11 +58,20 @@ function Get-DpaMonitorAlert {
         } catch {
             Stop-PSFFunction -Message "Could not retrieve alerts for Database ID $($Monitor.DatabaseId)" -ErrorRecord $_ -EnableException $EnableException
         }
-        foreach ($alert in $response.data) {
-            Write-PSFMessage -Level 'Verbose' -Message "Creating alert for $($alert.id)"
 
+        foreach ($alert in $response.data) {
             if ($alerts.AlertId -notcontains $alert.id) {
-                $alerts += New-Object -TypeName 'Alert' -ArgumentList $alert
+                Write-PSFMessage -Level 'Verbose' -Message "Getting alert status for Database ID $($Monitor.DatabaseId) and Alert ID $($alert.id)"
+                $statusEndpoint = "/alerts/$($alert.id)/databases/$($Monitor.DatabaseId)/status"
+                try {
+                    $statusResponse = Invoke-DpaRequest -Endpoint $statusEndpoint -Method 'GET'
+                    $status = $statusResponse.data
+                } catch {
+                    Stop-PSFFunction -Message 'Could not retrieve alert status' -ErrorRecord $_ -EnableException $EnableException
+                }
+    
+                Write-PSFMessage -Level 'Verbose' -Message "Creating alert for $($alert.id)"
+                $alerts += New-Object -TypeName 'MonitorAlert' -ArgumentList $alert, $status
             }
         }
 

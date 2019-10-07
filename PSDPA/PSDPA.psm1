@@ -2,6 +2,7 @@ $Classes = @(
     (Get-ChildItem -Path "$PSScriptRoot\Classes\AccessToken.ps1"),
     (Get-ChildItem -Path "$PSScriptRoot\Classes\Monitor.ps1"),
     (Get-ChildItem -Path "$PSScriptRoot\Classes\Alert.ps1"),
+    (Get-ChildItem -Path "$PSScriptRoot\Classes\MonitorAlert.ps1"),
     (Get-ChildItem -Path "$PSScriptRoot\Classes\AlertGroup.ps1"),
     (Get-ChildItem -Path "$PSScriptRoot\Classes\Annotation.ps1")
 )
