@@ -1,17 +1,31 @@
 <#
 
 .SYNOPSIS
+Gets alert definitions from DPA.
 
 .DESCRIPTION
+Gets alert definitions from DPA that include what monitors are directly
+associated to them.
+
+.PARAMETER AlertId
+Alert ID of the alert.
+
+.PARAMETER AlertName
+Name of the alert.
 
 .PARAMETER EnableException
 Replaces user friendly yellow warnings with bloody red exceptions of doom! Use
 this if you want the function to throw terminating errors you want to catch.
 
 .EXAMPLE
-Get-DpaMonitor | Get-DpaAnnotation -StartTime (Get-Date).AddDays(-30)
+Get-DpaAlert
 
-Get all annotations over the last 30 days for all monitors
+Gets all alerts
+
+.EXAMPLE
+Get-DpaAlert -AlertName 'Instance Availability'
+
+Gets the "Instance Availability" alert definition
 
 .NOTES
 Author: Andrew Wickham ( @awickham )
@@ -29,6 +43,7 @@ function Get-DpaAlert {
         [Parameter(ParameterSetName = 'ByName')]
         [string[]] $AlertName,
 
+        [Parameter()]
         [switch] $EnableException
     )
     

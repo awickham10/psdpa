@@ -1,3 +1,34 @@
+<#
+
+.SYNOPSIS
+Gets alert groups assigned to a monitor.
+
+.PARAMETER DatabaseId
+Database ID of the monitor (db_id in the URL).
+
+.PARAMETER MonitorName
+Name of the monitor.
+
+.PARAMETER Monitor
+The monitor object(s).
+
+.PARAMETER EnableException
+Replaces user friendly yellow warnings with bloody red exceptions of doom! Use
+this if you want the function to throw terminating errors you want to catch.
+
+.EXAMPLE
+Get-DpaMonitorAlertGroup -MonitorName 'My Server'
+
+Gets alert groups "My Server" is part of.
+
+.NOTES
+Author: Andrew Wickham ( @awickham )
+
+Copyright: (C) Andrew Wickham, andrew@awickham.com
+License: MIT https://opensource.org/licenses/MIT
+
+#>
+
 function Get-DpaMonitorAlertGroup {
     [CmdletBinding(DefaultParameterSetName = 'ByName')]
     param (

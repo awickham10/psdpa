@@ -7,10 +7,12 @@ Creates a new alert e-mail template.
 The name of the alert e-mail template. This is the "Name" field in DPA.
 
 .PARAMETER Description
-A longer description of the alert e-mail template. This is the "Description" field in DPA.
+A longer description of the alert e-mail template. This is the "Description"
+field in DPA.
 
 .PARAMETER TextFormat
-The format of the e-mail body (HTML or plain text). This is the "Body message format" field in DPA.
+The format of the e-mail body (HTML or plain text). This is the "Body message
+format" field in DPA.
 
 .PARAMETER Subject
 The subject of the e-mail. This is the "Subject" field in DPA.

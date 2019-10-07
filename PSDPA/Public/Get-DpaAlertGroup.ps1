@@ -1,17 +1,19 @@
 <#
 
 .SYNOPSIS
+Gets alert groups from DPA.
 
 .DESCRIPTION
+Gets alert groups from DPA that include associated alerts and monitors.
 
 .PARAMETER EnableException
 Replaces user friendly yellow warnings with bloody red exceptions of doom! Use
 this if you want the function to throw terminating errors you want to catch.
 
 .EXAMPLE
-Get-DpaMonitor | Get-DpaAnnotation -StartTime (Get-Date).AddDays(-30)
+Get-DpaAlertGroup -AlertGroupName 'SQL'
 
-Get all annotations over the last 30 days for all monitors
+Gets the "SQL" alert group
 
 .NOTES
 Author: Andrew Wickham ( @awickham )
@@ -29,6 +31,7 @@ function Get-DpaAlertGroup {
         [Parameter(ParameterSetName = 'ByName')]
         [string[]] $AlertGroupName,
 
+        [Parameter()]
         [switch] $EnableException
     )
 
