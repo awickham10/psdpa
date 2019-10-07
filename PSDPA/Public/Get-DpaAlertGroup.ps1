@@ -52,7 +52,7 @@ function Get-DpaAlertGroup {
 
             $response = Invoke-DpaRequest -Endpoint $endpoint -Method 'Get'
 
-            # filter by name if applicable 
+            # filter by name if applicable
             if (Test-PSFParameterBinding -ParameterName 'AlertGroupName') {
                 $response = $response.data | Where-Object { $_.name -in $AlertGroupName }
             } else {
