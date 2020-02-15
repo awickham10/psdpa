@@ -20,8 +20,15 @@ function Get-DpaAccessToken {
         Set-PSFConfig -Module 'psdpa' -Name 'accesstoken' -Value $accessToken
         $PSDefaultParameterValues['Invoke-DpaRequest:AccessToken'] = $accessToken
 
-        return $accessToken
+        $accessToken
     } catch {
-        Stop-PSFFunction -Message "Could not obtain access token" -ErrorRecord $_ -EnableException $EnableException
+        if ($_.ErrorDetails.Message) {
+            $errorJson = $_.ErrorDetails.Message | ConvertFrom-Json
+            $message = "$($errorJson.messages.reason) ($($errorJson.messages.code))"
+        } else {
+            $message = 'Could not obtain access token'
+        }
+
+        Stop-PSFFunction -Message $message -ErrorRecord $_ -EnableException $EnableException
     }
 }

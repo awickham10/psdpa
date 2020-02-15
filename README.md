@@ -30,6 +30,24 @@ Get-DpaMonitor
 Get-DpaMonitor | Add-DpaAnnotation -Title 'Patching' -Description 'Quarterly patching'
 ```
 
+## Change Log
+### 19.10.1
+**New Version Scheme**
+Switching over to YY.MM.X format to better articulate when the module has last been updated.
+
+**New Commands**
+-   Get-DpaAlert
+-   Get-DpaAlertEmailTemplate
+-   Get-DpaAlertGroup
+-   Get-DpaMonitorAlert
+-   Get-DpaMonitorAlertGroup
+-   New-DpaAlertEmailTemplate
+-   Remove-DpaAlertEmailTemplate
+-   Remove-DpaAlertGroupMonitor
+-   Set-DpaAlert
+-   Set-DpaAlertEmailTemplate
+-   Set-DpaMonitorPassword
+
 ## Functions
 
 ### Configuration
@@ -42,7 +60,7 @@ Get-DpaMonitor | Add-DpaAnnotation -Title 'Patching' -Description 'Quarterly pat
 -   Get-DpaMonitor - Complete
 -   Start-DpaMonitor - Complete
 -   Stop-DpaMonitor - Complete
--   Set-DpaMonitorPassword - Not Implemented
+-   Set-DpaMonitorPassword - Test Coverage Needed
 -   New-DpaMonitor - Test Coverage Needed
 
 ### Licensing

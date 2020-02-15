@@ -14,5 +14,9 @@ if (-not $ENV:PSDPA_TOKEN) {
     Stop-PSFFunction -Message "Environment variable PSDPA_TOKEN is not set" -EnableException $true
 }
 
+if (-not $ENV:PSDPA_TEST_SQLINSTANCE) {
+    Stop-PSFFunction -Message "Environment variable PSDPA_TEST_SQLINSTANCE is not set" -EnableException $true
+}
+
 Set-PSFConfig -Module 'PSDPA' -Name 'baseuri' -Value $ENV:PSDPA_BASEURI
 Set-PSFConfig -Module 'PSDPA' -Name 'refreshtoken' -Value $ENV:PSDPA_TOKEN

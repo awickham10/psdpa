@@ -28,101 +28,76 @@ Describe "$CommandName Unit Tests" -Tag 'Unit' {
 }
 
 Describe "$CommandName Integration Tests" -Tag 'Integration' {
-    BeforeAll {
-        Copy-Item -Path "$PSScriptRoot\Responses\Monitor\" -Destination 'TestDrive:\' -Recurse -Force
-        Copy-Item -Path "$PSScriptRoot\Responses\Annotation\" -Destination 'TestDrive:\' -Recurse -Force
-    }
-
     InModuleScope 'PSDPA' {
-        Mock -CommandName 'Get-DpaAccessToken' -MockWith {
-            New-Object -TypeName 'AccessToken' -ArgumentList ([PSCustomObject] @{
-                access_token = 'myfakeaccesstoken'
-                token_type = 'bearer'
-                expires_in = 900
-            })
-        }
-
-        Mock -CommandName 'Invoke-RestMethod' -MockWith {
-            Write-PSFMessage -Level 'Verbose' -Message "Invoke-RestMethod called to $Uri"
-            if ($Uri -like '*/databases/*/monitor-information') {
-                Get-Content -Path 'TestDrive:\Monitor\MultipleMonitors.json' -Raw | ConvertFrom-Json
-            }
-            elseif ($Uri -like '*/databases/monitor-information') {
-                Get-Content -Path 'TestDrive:\Monitor\MultipleMonitors.json' -Raw | ConvertFrom-Json
-            }
-            elseif ($Uri -like '*/databases/1/annotations?startTime=2018-01-01*') {
-                throw "Filtered by StartTime"
-            }
-            elseif ($Uri -like '*/databases/1/annotations?startTime=*&endTime=2018-01-01*') {
-                throw "Filtered by EndTime"
-            }
-            elseif ($Uri -like '*/databases/1/annotations*') {
-                Get-Content -Path 'TestDrive:\Annotation\Mock1Annotations.json' -Raw | ConvertFrom-Json
-            }
-            elseif ($Uri -like '*/databases/2/annotations*') {
-                Get-Content -Path 'TestDrive:\Annotation\Mock2Annotations.json' -Raw | ConvertFrom-Json
-            }
-            else {
-                throw "Mock for $Uri is not implemented"
-            }
-        }
-
         It 'gets annotations by -DatabaseId' {
             $databaseId = 1
             $annotation = Get-DpaAnnotation -DatabaseId $databaseId
-            $annotation | Should -HaveCount 3
-            $annotation.AnnotationId | Should -Be @(1, 2, 3)
-
-            Assert-MockCalled -CommandName 'Invoke-RestMethod' -Times 1
+            $annotation.Count | Should -BeGreaterOrEqual 1
+            $annotation[0].GetType().Name | Should -Be 'Annotation'
         }
 
         It 'gets annotations by -MonitorName' {
-            $monitorName = 'MOCK-2'
+            $monitorName = $ENV:PSDPA_TEST_SQLINSTANCE
             $annotation = Get-DpaAnnotation -MonitorName $monitorName
-            $annotation | Should -HaveCount 3
-            $annotation.AnnotationId | Should -Be @(4, 5, 6)
+            $annotation.Count | Should -BeGreaterOrEqual 1
+            $annotation[0].GetType().Name | Should -Be 'Annotation'
         }
 
-        $monitor = New-Object -TypeName 'SqlServerMonitor' -ArgumentList ([PSCustomObject] @{
-            DbId = 1
-            Name = 'MOCK-1'
-            Ip = '127.0.0.1'
-            JdbcUrlProperties = 'applicationIntent=readOnly'
-            ConnectionProperties = ''
-            DatabaseType = 'SQL Server'
-            DatabaseVersion = '12.0.6205.1'
-            DatabaseEdition = 'Enterprise Edition; core-based Licensing (64-bit)'
-            MonitoringUser = 'ignite_next'
-            DefaultDbLicenseCategory = 'DPACAT2'
-            AssignedDbLicenseCategory = 'DPACAT2'
-            AssignedVmLicenseCategory = ''
-            MonitorState = 'Monitor Running'
-            OldestMonitoringDate = '2018-12-04T00:00:00.000-07:00'
-            LatestMonitoringDate = '2018-01-02T00:00:00.000-07:00'
-            AgListenerName = ''
-            AgClusterName = ''
-            LinkedToVirtualMachine = $false
-        })
-
         It 'gets annotations by -Monitor' {
-            Get-DpaAnnotation -Monitor $monitor | Should -HaveCount 3
+            $monitor = Get-DpaMonitor -MonitorName $ENV:PSDPA_TEST_SQLINSTANCE
+            $annotations = Get-DpaAnnotation -Monitor $monitor
+            $annotations.Count | Should -BeGreaterOrEqual 1
+            $annotations[0].GetType().Name | Should -Be 'Annotation'
         }
 
         It 'gets annotations for multiple monitors' {
             $databaseId = @(1, 2)
-            Get-DpaAnnotation -DatabaseId $databaseId | Should -HaveCount 6
+            $annotations = Get-DpaAnnotation -DatabaseId $databaseId
+            $annotations.Count | Should -BeGreaterOrEqual 1
+            $annotations[0].GetType().Name | Should -Be 'Annotation'
         }
 
         It 'gets annotations from pipeline' {
-            $monitor | Get-DpaAnnotation | Should -HaveCount 3
+            $monitor = Get-DpaMonitor -MonitorName $ENV:PSDPA_TEST_SQLINSTANCE
+            $annotations = $monitor | Get-DpaAnnotation
+            $annotations.Count | Should -BeGreaterOrEqual 1
+            $annotations[0].GetType().Name | Should -Be 'Annotation'
         }
 
         It 'filters by -StartTime' {
-            { Get-DpaAnnotation -DatabaseId 1 -StartTime '2018-01-01' } | Should -Throw 'Filtered by StartTime'
+            $monitor = Get-DpaMonitor -MonitorName $ENV:PSDPA_TEST_SQLINSTANCE
+            $annotations = Get-DpaAnnotation -Monitor $monitor
+            
+            $minStartTime = $annotations.Time | Sort-Object | Select-Object -First 1
+            $newMinStartTime = $minStartTime.AddSeconds(1)
+
+            $startTimeAnnotations = Get-DpaAnnotation -Monitor $monitor -StartTime $newMinStartTime
+            
+            # count should have gone down by one
+            $startTimeAnnotations.Count | Should -BeLessThan $annotations.Count
+
+            # check all the start times
+            foreach ($startTimeAnnotation in $startTimeAnnotations) {
+                $startTimeAnnotation.Time | Should -BeGreaterOrEqual $newMinStartTime
+            }
         }
 
         It 'filters by -EndTime' {
-            { Get-DpaAnnotation -DatabaseId 1 -EndTime '2018-01-01' } | Should -Throw 'Filtered by EndTime'
+            $monitor = Get-DpaMonitor -MonitorName $ENV:PSDPA_TEST_SQLINSTANCE
+            $annotations = Get-DpaAnnotation -Monitor $monitor
+            
+            $maxStartTime = $annotations.Time | Sort-Object -Descending | Select-Object -First 1
+            $newMaxStartTime = $maxStartTime.AddSeconds(-1)
+
+            $endTimeAnnotations = Get-DpaAnnotation -Monitor $monitor -EndTime $newMaxStartTime
+            
+            # count should have gone down by one
+            $endTimeAnnotations.Count | Should -BeLessThan $annotations.Count
+
+            # check all the start times
+            foreach ($endTimeAnnotation in $endTimeAnnotations) {
+                $endTimeAnnotation.Time | Should -BeLessThan $newMaxStartTime
+            }
         }
 
         It 'has the monitor object associated with it' {

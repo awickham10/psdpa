@@ -20,106 +20,104 @@ Describe "$CommandName Unit Tests" -Tag 'Unit' {
 
 Describe "$CommandName Integration Tests" -Tag 'Integration' {
     InModuleScope -ModuleName 'PSDPA' {
-        Context 'Azure SQL DB' {
-            BeforeAll {
-                # set the start time and remove ticks since DPA doesn't support them
-                $contextStartTime = Get-Date
-                $contextStartTime = $contextStartTime.AddTicks(-($contextStartTime.Ticks % [TimeSpan]::TicksPerSecond));
+        BeforeAll {
+            # set the start time and remove ticks since DPA doesn't support them
+            $contextStartTime = Get-Date
+            $contextStartTime = $contextStartTime.AddTicks(-($contextStartTime.Ticks % [TimeSpan]::TicksPerSecond));
 
-                # get our test monitor
-                $monitor = Get-DpaMonitor -MonitorName 'PSDPATESTDB01@PSDPATEST01' -EnableException
+            # get our test monitor
+            $monitor = Get-DpaMonitor -MonitorName $ENV:PSDPA_TEST_SQLINSTANCE -EnableException
 
-                # default annotation parameters to use for tests
-                $annotationParams = @{
-                    Monitor = $monitor
-                    Title = 'Testing API'
-                    Description = 'This is a test of Add-DpaAnnotation'
-                    CreatedBy = 'Test User'
-                    Time = $contextStartTime
-                }
+            # default annotation parameters to use for tests
+            $annotationParams = @{
+                Monitor = $monitor
+                Title = 'Testing API'
+                Description = 'This is a test of Add-DpaAnnotation'
+                CreatedBy = 'Test User'
+                Time = $contextStartTime
+            }
+        }
+
+        BeforeEach {
+            $script:annotation = $null
+        }
+
+        It 'should add an annotation when using -Monitor' {
+            { $script:annotation = Add-DpaAnnotation @annotationParams -EnableException } | Should -Not -Throw
+
+            foreach ($annotationParam in $annotationParams.Keys) {
+                $annotation.$annotationParam | Should -BeExactly $annotationParams[$annotationParam]
             }
 
-            BeforeEach {
-                $script:annotation = $null
+            $annotation.Type | Should -Be 'API'
+        }
+
+        It 'should add an annotation when using -DatabaseId' {
+            $thisAnnotationParams = $annotationParams.Clone()
+            $thisAnnotationParams.Remove('Monitor')
+            $thisAnnotationParams['DatabaseId'] = $monitor.DatabaseId
+
+            { $script:annotation = Add-DpaAnnotation @thisAnnotationParams -EnableException } | Should -Not -Throw
+
+            foreach ($annotationParam in $thisAnnotationParams.Keys) {
+                $annotation.$annotationParam | Should -BeExactly $thisAnnotationParams[$annotationParam]
             }
 
-            It 'should add an annotation when using -Monitor' {
-                { $script:annotation = Add-DpaAnnotation @annotationParams -EnableException } | Should -Not -Throw
+            $annotation.Type | Should -Be 'API'
+        }
 
-                foreach ($annotationParam in $annotationParams.Keys) {
-                    $annotation.$annotationParam | Should -BeExactly $annotationParams[$annotationParam]
-                }
+        It 'should add an annotation when using -MonitorName' {
+            $thisAnnotationParams = $annotationParams.Clone()
+            $thisAnnotationParams.Remove('Monitor')
+            $thisAnnotationParams['MonitorName'] = $monitor.Name
 
-                $annotation.Type | Should -Be 'API'
+            { $script:annotation = Add-DpaAnnotation @thisAnnotationParams -EnableException } | Should -Not -Throw
+
+            $annotation.DatabaseId | Should -BeExactly $monitor.DatabaseId
+            $annotation.Type | Should -Be 'API'
+        }
+
+        It 'should add an annotation when piping a monitor' {
+            $thisAnnotationParams = $annotationParams.Clone()
+            $thisAnnotationParams.Remove('Monitor')
+
+            { $script:annotation = $monitor | Add-DpaAnnotation @thisAnnotationParams -EnableException } | Should -Not -Throw
+
+            foreach ($annotationParam in $thisAnnotationParams.Keys) {
+                $annotation.$annotationParam | Should -BeExactly $thisAnnotationParams[$annotationParam]
             }
 
-            It 'should add an annotation when using -DatabaseId' {
-                $thisAnnotationParams = $annotationParams.Clone()
-                $thisAnnotationParams.Remove('Monitor')
-                $thisAnnotationParams['DatabaseId'] = $monitor.DatabaseId
+            $annotation.DatabaseId | Should -BeExactly $monitor.DatabaseId
+            $annotation.Type | Should -Be 'API'
+        }
 
-                { $script:annotation = Add-DpaAnnotation @thisAnnotationParams -EnableException } | Should -Not -Throw
+        It 'should default CreatedBy to the current user' {
+            $thisAnnotationParams = $annotationParams.Clone()
+            $thisAnnotationParams.Remove('CreatedBy')
 
-                foreach ($annotationParam in $thisAnnotationParams.Keys) {
-                    $annotation.$annotationParam | Should -BeExactly $thisAnnotationParams[$annotationParam]
-                }
+            { $script:annotation = Add-DpaAnnotation @thisAnnotationParams -EnableException } | Should -Not -Throw
 
-                $annotation.Type | Should -Be 'API'
+            foreach ($annotationParam in $thisAnnotationParams.Keys) {
+                $annotation.$annotationParam | Should -BeExactly $thisAnnotationParams[$annotationParam]
             }
 
-            It 'should add an annotation when using -MonitorName' {
-                $thisAnnotationParams = $annotationParams.Clone()
-                $thisAnnotationParams.Remove('Monitor')
-                $thisAnnotationParams['MonitorName'] = $monitor.Name
+            $annotation.CreatedBy | Should -Be $env:USERNAME
+        }
 
-                { $script:annotation = Add-DpaAnnotation @thisAnnotationParams -EnableException } | Should -Not -Throw
+        It 'should default Time to the current time' {
+            $thisAnnotationParams = $annotationParams.Clone()
+            $thisAnnotationParams.Remove('Time')
 
-                $annotation.DatabaseId | Should -BeExactly $monitor.DatabaseId
-                $annotation.Type | Should -Be 'API'
+            { $script:annotation = Add-DpaAnnotation @thisAnnotationParams -EnableException } | Should -Not -Throw
+
+            foreach ($annotationParam in $thisAnnotationParams.Keys) {
+                $annotation.$annotationParam | Should -BeExactly $thisAnnotationParams[$annotationParam]
             }
 
-            It 'should add an annotation when piping a monitor' {
-                $thisAnnotationParams = $annotationParams.Clone()
-                $thisAnnotationParams.Remove('Monitor')
-
-                { $script:annotation = $monitor | Add-DpaAnnotation @thisAnnotationParams -EnableException } | Should -Not -Throw
-
-                foreach ($annotationParam in $thisAnnotationParams.Keys) {
-                    $annotation.$annotationParam | Should -BeExactly $thisAnnotationParams[$annotationParam]
-                }
-
-                $annotation.DatabaseId | Should -BeExactly $monitor.DatabaseId
-                $annotation.Type | Should -Be 'API'
-            }
-
-            It 'should default CreatedBy to the current user' {
-                $thisAnnotationParams = $annotationParams.Clone()
-                $thisAnnotationParams.Remove('CreatedBy')
-
-                { $script:annotation = Add-DpaAnnotation @thisAnnotationParams -EnableException } | Should -Not -Throw
-
-                foreach ($annotationParam in $thisAnnotationParams.Keys) {
-                    $annotation.$annotationParam | Should -BeExactly $thisAnnotationParams[$annotationParam]
-                }
-
-                $annotation.CreatedBy | Should -Be $env:USERNAME
-            }
-
-            It 'should default Time to the current time' {
-                $thisAnnotationParams = $annotationParams.Clone()
-                $thisAnnotationParams.Remove('Time')
-
-                { $script:annotation = Add-DpaAnnotation @thisAnnotationParams -EnableException } | Should -Not -Throw
-
-                foreach ($annotationParam in $thisAnnotationParams.Keys) {
-                    $annotation.$annotationParam | Should -BeExactly $thisAnnotationParams[$annotationParam]
-                }
-
-                # give ourselves a 10 minute swing on time just in case server times vary
-                $currentTime = Get-Date
-                $annotation.Time | Should -BeGreaterThan $currentTime.AddMinutes(-5)
-                $annotation.Time | Should -BeLessThan $currentTime.AddMinutes(5)
-            }
+            # give ourselves a 10 minute swing on time just in case server times vary
+            $currentTime = Get-Date
+            $annotation.Time | Should -BeGreaterThan $currentTime.AddMinutes(-5)
+            $annotation.Time | Should -BeLessThan $currentTime.AddMinutes(5)
         }
     }
 }
